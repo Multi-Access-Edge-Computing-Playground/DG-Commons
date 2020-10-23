@@ -8,9 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Utility {
+public class SharedUtility {
 
     public static List<Double> array2List(double[] array) {
         return Arrays.stream(array)
@@ -92,7 +91,7 @@ public class Utility {
      * frames
      */
     public static List<Double>[] combineAllSensorData(List<Frame> frames) {
-        List<Double>[] result = new List[Constants.TOTAL_SENSOR_DATA_OF_FRAME];
+        List<Double>[] result = new List[SharedConstants.TOTAL_SENSOR_DATA_OF_FRAME];
         List<double[]> allFrameDataList = new ArrayList<>();
         for (int i = 0; i < result.length; i++) {
             List<Double> sensorValues = new LinkedList<>();
@@ -111,7 +110,7 @@ public class Utility {
         private static final long serialVersionUID = 612554581182062L;
 
         private InvalidSensorNumberException(int sensorNumber) {
-            super(Constants.INVALID_SENSOR_NUMBER_EXCEPTION + sensorNumber);
+            super(SharedConstants.INVALID_SENSOR_NUMBER_EXCEPTION + sensorNumber);
         }
     }
 
@@ -119,7 +118,7 @@ public class Utility {
         private static final long serialVersionUID = -4772924540264831249L;
 
         private InvalidArrayIndexException(int arrayIndex) {
-            super(Constants.INVALID_ARRAY_INDEX_EXCEPTION + arrayIndex);
+            super(SharedConstants.INVALID_ARRAY_INDEX_EXCEPTION + arrayIndex);
         }
     }
 }

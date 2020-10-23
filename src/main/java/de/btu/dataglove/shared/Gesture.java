@@ -88,9 +88,9 @@ public class Gesture implements Serializable {
     10: boundAccZ
      */
     private double[] extractFieldFromAllBoundariesArray(double[] allBoundaries, int fieldID) {
-        double[] result = new double[Constants.NUMBER_OF_SENSORS];
+        double[] result = new double[SharedConstants.NUMBER_OF_SENSORS];
 
-        int startPos = fieldID * Constants.NUMBER_OF_SENSORS;
+        int startPos = fieldID * SharedConstants.NUMBER_OF_SENSORS;
         for (int i = 0; i < result.length; i++) {
             result[i] = allBoundaries[startPos + i];
         }

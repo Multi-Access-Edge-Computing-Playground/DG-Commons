@@ -36,13 +36,13 @@ public class EulerFrame {
         accY = frame.accY;
         accZ = frame.accZ;
 
-        phi = new double[Constants.NUMBER_OF_SENSORS];
-        theta = new double[Constants.NUMBER_OF_SENSORS];
-        psi = new double[Constants.NUMBER_OF_SENSORS];
+        phi = new double[SharedConstants.NUMBER_OF_SENSORS];
+        theta = new double[SharedConstants.NUMBER_OF_SENSORS];
+        psi = new double[SharedConstants.NUMBER_OF_SENSORS];
 
         double x;
         double y;
-        for (int i = 0; i < Constants.NUMBER_OF_SENSORS; i++) {
+        for (int i = 0; i < SharedConstants.NUMBER_OF_SENSORS; i++) {
             x = 2 * (frame.rawRotScalar[i] * frame.rawRotVectorX[i] + frame.rawRotVectorY[i] * frame.rawRotVectorZ[i]);
             y = 1 - 2 * (Math.pow(frame.rawRotVectorX[i], 2) + Math.pow(frame.rawRotVectorY[i], 2));
             phi[i] = Math.toDegrees(Math.atan2(x, y));
@@ -56,7 +56,7 @@ public class EulerFrame {
     }
 
     public void makeAnglesPositive() {
-        for (int i = 0; i < Constants.NUMBER_OF_SENSORS; i++) {
+        for (int i = 0; i < SharedConstants.NUMBER_OF_SENSORS; i++) {
             if (phi[i] < 0) {
                 phi[i] += 360;
             }
@@ -82,10 +82,10 @@ public class EulerFrame {
      */
     public double[] getAllAngles() {
         List<Double> resultList = new LinkedList<>();
-        resultList.addAll(Utility.array2List(phi));
-        resultList.addAll(Utility.array2List(theta));
-        resultList.addAll(Utility.array2List(psi));
+        resultList.addAll(SharedUtility.array2List(phi));
+        resultList.addAll(SharedUtility.array2List(theta));
+        resultList.addAll(SharedUtility.array2List(psi));
 
-        return Utility.list2Array(resultList);
+        return SharedUtility.list2Array(resultList);
     }
 }

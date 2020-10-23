@@ -81,19 +81,19 @@ public class Frame implements Serializable {
      */
     public double[] getAllFrameData() {
         List<Double> resultList = new LinkedList<>();
-        resultList.addAll(Utility.array2List(this.rawRotScalar));
-        resultList.addAll(Utility.array2List(this.rawRotVectorX));
-        resultList.addAll(Utility.array2List(this.rawRotVectorY));
-        resultList.addAll(Utility.array2List(this.rawRotVectorZ));
-        resultList.addAll(Utility.array2List(this.rotScalar));
-        resultList.addAll(Utility.array2List(this.rotVectorX));
-        resultList.addAll(Utility.array2List(this.rotVectorY));
-        resultList.addAll(Utility.array2List(this.rotVectorZ));
-        resultList.addAll(Utility.array2List(this.accX));
-        resultList.addAll(Utility.array2List(this.accY));
-        resultList.addAll(Utility.array2List(this.accZ));
+        resultList.addAll(SharedUtility.array2List(this.rawRotScalar));
+        resultList.addAll(SharedUtility.array2List(this.rawRotVectorX));
+        resultList.addAll(SharedUtility.array2List(this.rawRotVectorY));
+        resultList.addAll(SharedUtility.array2List(this.rawRotVectorZ));
+        resultList.addAll(SharedUtility.array2List(this.rotScalar));
+        resultList.addAll(SharedUtility.array2List(this.rotVectorX));
+        resultList.addAll(SharedUtility.array2List(this.rotVectorY));
+        resultList.addAll(SharedUtility.array2List(this.rotVectorZ));
+        resultList.addAll(SharedUtility.array2List(this.accX));
+        resultList.addAll(SharedUtility.array2List(this.accY));
+        resultList.addAll(SharedUtility.array2List(this.accZ));
 
-        return Utility.list2Array(resultList);
+        return SharedUtility.list2Array(resultList);
     }
 }
 

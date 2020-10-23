@@ -1,6 +1,6 @@
 package de.btu.dataglove.shared;
 
-public class Constants {
+public class SharedConstants {
 
     //these numbers are fixed as long as the same pair of gloves are being used
     public static final int GLOVE_ONE_LOWEST_SENSOR_ID = 24;
