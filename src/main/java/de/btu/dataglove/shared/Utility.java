@@ -19,11 +19,9 @@ public class Utility {
     }
 
     public static double[] list2Array(List<Double> list) {
-        return unboxDoubleArray(list.toArray((Double[]::new)));
-    }
-
-    private static double[] unboxDoubleArray(Double[] boxedArray) {
-        return Stream.of(boxedArray).mapToDouble(Double::doubleValue).toArray();
+        return list.stream()
+                .mapToDouble(Double::doubleValue)
+                .toArray();
     }
 
     public static int getArrayPositionOfSensor(int sensorNumber) throws  InvalidSensorNumberException {
