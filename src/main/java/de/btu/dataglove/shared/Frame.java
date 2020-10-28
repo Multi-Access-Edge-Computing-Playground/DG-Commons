@@ -10,24 +10,24 @@ represents a single frame captured with the data glove
 public class Frame implements Serializable {
     private static final long serialVersionUID = 1540638284367827038L;
 
-    public String nameOfTask;
-    public String userName;
-    public long timeStamp;
-    public int frameNumber;
-    public int recordingNumber;
-    public int typeOfRecording;
+    public final String nameOfTask;
+    public final String userName;
+    public final long timeStamp;
+    public final int frameNumber;
+    public final int recordingNumber;
+    public final int typeOfRecording;
 
-    public double[] rawRotScalar;
-    public double[] rawRotVectorX;
-    public double[] rawRotVectorY;
-    public double[] rawRotVectorZ;
-    public double[] rotScalar;
-    public double[] rotVectorX;
-    public double[] rotVectorY;
-    public double[] rotVectorZ;
-    public double[] accX;
-    public double[] accY;
-    public double[] accZ;
+    public final double[] rawRotScalar;
+    public final double[] rawRotVectorX;
+    public final double[] rawRotVectorY;
+    public final double[] rawRotVectorZ;
+    public final double[] rotScalar;
+    public final double[] rotVectorX;
+    public final double[] rotVectorY;
+    public final double[] rotVectorZ;
+    public final double[] accX;
+    public final double[] accY;
+    public final double[] accZ;
 
     /*
     constructor for a frame. Arrays - sensor matching as follows:

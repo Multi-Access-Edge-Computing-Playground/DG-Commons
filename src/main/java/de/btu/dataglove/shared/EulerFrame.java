@@ -4,24 +4,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 /*
-this class represents a single frame with quaternions having been converted to euler angles
+represents a single frame with quaternions having been converted to euler angles
  */
 public class EulerFrame {
 
-    public String nameOfTask;
-    public String userName;
-    public long timeStamp;
-    public int frameNumber;
-    public int recordingNumber;
-    public int typeOfRecording;
+    public final String nameOfTask;
+    public final String userName;
+    public final long timeStamp;
+    public final int frameNumber;
+    public final int recordingNumber;
+    public final int typeOfRecording;
 
-    public double[] phi;
-    public double[] theta;
-    public double[] psi;
+    public final double[] phi;
+    public final double[] theta;
+    public final double[] psi;
 
-    public double[] accX;
-    public double[] accY;
-    public double[] accZ;
+    public final double[] accX;
+    public final double[] accY;
+    public final double[] accZ;
 
     public EulerFrame(Frame frame) {
 

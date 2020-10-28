@@ -5,18 +5,18 @@ represents a static gesture with euler angles instead of quaternions
  */
 public class EulerGesture {
 
-    public String name;
-    public int typeOfGesture;
-    public int algorithmUsedForCalculation;
-    public double[] algorithmParameters;
+    public final String name;
+    public final int typeOfGesture;
+    public final int algorithmUsedForCalculation;
+    public final double[] algorithmParameters;
 
-    public double[] lowerBoundPhi;
-    public double[] lowerBoundTheta;
-    public double[] lowerBoundPsi;
+    public final double[] lowerBoundPhi;
+    public final double[] lowerBoundTheta;
+    public final double[] lowerBoundPsi;
 
-    public double[] upperBoundPhi;
-    public double[] upperBoundTheta;
-    public double[] upperBoundPsi;
+    public final double[] upperBoundPhi;
+    public final double[] upperBoundTheta;
+    public final double[] upperBoundPsi;
 
     public EulerGesture(String name, int typeOfGesture, int algorithmUsedForCalculation, double[] algorithmParameters,
                         double[] lowerBoundPhi, double[] lowerBoundTheta, double[] lowerBoundPsi,
@@ -49,6 +49,7 @@ public class EulerGesture {
 
     /*
     returns the boundary values for a given field based on the field id
+    field ids are based on the getAllAngles method in the EulerFrame class
     field ids:
     0: boundPhi
     1: boundTheta

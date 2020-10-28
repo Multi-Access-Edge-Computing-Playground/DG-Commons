@@ -7,26 +7,26 @@ represents a static gesture
  */
 public class Gesture implements Serializable {
     private static final long serialVersionUID = -3244143415404822243L;
-    public String name;
-    public int typeOfGesture;
-    public int algorithmUsedForCalculation;
-    public double[] algorithmParameters;
+    public final String name;
+    public final int typeOfGesture;
+    public final int algorithmUsedForCalculation;
+    public final double[] algorithmParameters;
 
-    public double[] lowerBoundRotScalar;
-    public double[] lowerBoundRotVectorX;
-    public double[] lowerBoundRotVectorY;
-    public double[] lowerBoundRotVectorZ;
-    public double[] lowerBoundAccX;
-    public double[] lowerBoundAccY;
-    public double[] lowerBoundAccZ;
+    public final double[] lowerBoundRotScalar;
+    public final double[] lowerBoundRotVectorX;
+    public final double[] lowerBoundRotVectorY;
+    public final double[] lowerBoundRotVectorZ;
+    public final double[] lowerBoundAccX;
+    public final double[] lowerBoundAccY;
+    public final double[] lowerBoundAccZ;
 
-    public double[] upperBoundRotScalar;
-    public double[] upperBoundRotVectorX;
-    public double[] upperBoundRotVectorY;
-    public double[] upperBoundRotVectorZ;
-    public double[] upperBoundAccX;
-    public double[] upperBoundAccY;
-    public double[] upperBoundAccZ;
+    public final double[] upperBoundRotScalar;
+    public final double[] upperBoundRotVectorX;
+    public final double[] upperBoundRotVectorY;
+    public final double[] upperBoundRotVectorZ;
+    public final double[] upperBoundAccX;
+    public final double[] upperBoundAccY;
+    public final double[] upperBoundAccZ;
 
 
     public Gesture(String name, int typeOfGesture, int algorithmUsedForCalculation, double[] algorithmParameters,
@@ -80,6 +80,7 @@ public class Gesture implements Serializable {
 
     /*
     returns the boundary values for a given field based on the field id
+    field ids are based on the getAllFrameData method in the Frame class
     field ids:
     0: boundRawRotScalar
     1: boundRawRotVectorX
