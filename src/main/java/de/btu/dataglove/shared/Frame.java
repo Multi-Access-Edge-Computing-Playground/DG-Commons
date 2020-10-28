@@ -10,12 +10,12 @@ represents a single frame captured with the data glove
 public class Frame implements Serializable {
     private static final long serialVersionUID = 1540638284367827038L;
 
-    public final String nameOfTask;
-    public final String userName;
+    public String nameOfTask;
+    public String userName;
     public final long timeStamp;
     public final int frameNumber;
-    public final int recordingNumber;
-    public final int typeOfRecording;
+    public int recordingNumber;
+    public int typeOfRecording;
 
     public final double[] rawRotScalar;
     public final double[] rawRotVectorX;
