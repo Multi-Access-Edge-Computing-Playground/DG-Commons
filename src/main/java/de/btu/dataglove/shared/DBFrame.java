@@ -6,7 +6,7 @@ represents a single frame like it's stored in the database
 public class DBFrame {
     public final String nameOfTask;
     public final String userName;
-    public final long timeStamp;
+    public final double timeStamp;
     public final int frameNumber;
     public final int recordingNumber;
     public final int typeOfRecording;

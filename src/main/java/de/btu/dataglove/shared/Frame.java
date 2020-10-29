@@ -12,7 +12,7 @@ public class Frame implements Serializable {
 
     public String nameOfTask;
     public String userName;
-    public final long timeStamp;
+    public final double timeStamp;
     public final int frameNumber;
     public int recordingNumber;
     public int typeOfRecording;
@@ -46,7 +46,7 @@ public class Frame implements Serializable {
     Array 12 - Sensor 45
     Array 13 - Sensor 46
      */
-    public Frame(String nameOfTask, String userName, long timeStamp, int frameNumber, int recordingNumber, int typeOfRecording,
+    public Frame(String nameOfTask, String userName, double timeStamp, int frameNumber, int recordingNumber, int typeOfRecording,
                  double[] rawRotScalar, double[] rawRotVectorX, double[] rawRotVectorY, double[] rawRotVectorZ,
                  double[] rotScalar, double[] rotVectorX, double[] rotVectorY, double[] rotVectorZ, double[] accX, double[] accY, double[] accZ) {
         this.nameOfTask = nameOfTask;
