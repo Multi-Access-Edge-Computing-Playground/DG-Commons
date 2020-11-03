@@ -3,7 +3,7 @@ package de.btu.dataglove.shared;
 /*
 represents a static gesture with euler angles instead of quaternions
  */
-public class EulerGesture {
+public class EulerGesture implements Comparable<EulerGesture> {
 
     public final String name;
     public final int typeOfGesture;
@@ -63,5 +63,10 @@ public class EulerGesture {
             result[i] = allBoundaries[startPos + i];
         }
         return result;
+    }
+
+    @Override
+    public int compareTo(EulerGesture o) {
+        return name.compareTo(o.name);
     }
 }

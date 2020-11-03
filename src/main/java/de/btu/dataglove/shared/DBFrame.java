@@ -3,7 +3,7 @@ package de.btu.dataglove.shared;
 /*
 represents a single frame like it's stored in the database
  */
-public class DBFrame {
+public class DBFrame implements Comparable<DBFrame> {
     public final String nameOfTask;
     public final String userName;
     public final double timeStamp;
@@ -377,4 +377,8 @@ public class DBFrame {
                 accX, accY, accZ);
     }
 
+    @Override
+    public int compareTo(DBFrame o) {
+        return nameOfTask.compareTo(o.nameOfTask);
+    }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 /*
 represents a single frame captured with the data glove
  */
-public class Frame implements Serializable {
+public class Frame implements Serializable, Comparable<Frame> {
     private static final long serialVersionUID = 1540638284367827038L;
 
     public String nameOfTask;
@@ -94,6 +94,11 @@ public class Frame implements Serializable {
         resultList.addAll(SharedUtility.array2List(this.accZ));
 
         return SharedUtility.list2Array(resultList);
+    }
+
+    @Override
+    public int compareTo(Frame f) {
+        return Integer.compare(frameNumber, f.frameNumber);
     }
 }
 

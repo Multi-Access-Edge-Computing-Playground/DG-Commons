@@ -6,7 +6,7 @@ import java.util.List;
 /*
 represents a single frame with quaternions having been converted to euler angles
  */
-public class EulerFrame {
+public class EulerFrame implements Comparable<EulerFrame> {
 
     public final String nameOfTask;
     public final String userName;
@@ -87,5 +87,10 @@ public class EulerFrame {
         resultList.addAll(SharedUtility.array2List(psi));
 
         return SharedUtility.list2Array(resultList);
+    }
+
+    @Override
+    public int compareTo(EulerFrame o) {
+        return nameOfTask.compareTo(o.nameOfTask);
     }
 }

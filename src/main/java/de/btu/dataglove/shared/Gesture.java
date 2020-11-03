@@ -5,7 +5,7 @@ import java.io.Serializable;
 /*
 represents a static gesture
  */
-public class Gesture implements Serializable {
+public class Gesture implements Serializable, Comparable<Gesture> {
     private static final long serialVersionUID = -3244143415404822243L;
     public final String name;
     public final int typeOfGesture;
@@ -98,4 +98,8 @@ public class Gesture implements Serializable {
         return result;
     }
 
+    @Override
+    public int compareTo(Gesture o) {
+        return name.compareTo(o.name);
+    }
 }
