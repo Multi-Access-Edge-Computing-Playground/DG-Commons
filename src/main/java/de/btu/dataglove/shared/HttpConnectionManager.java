@@ -2,6 +2,7 @@ package de.btu.dataglove.shared;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import okhttp3.*;
 
@@ -40,9 +41,10 @@ public class HttpConnectionManager {
 
     /*
     saves an object to the database.
+    the object can also be a list containing supported elements
     returns true on success, returns false otherwise
      */
-    public static boolean saveObjectsToDatabase(Object object) throws ClassNotSupportedByDBException, IOException {
+    public static boolean saveObjectToDatabase(Object object) throws ClassNotSupportedByDBException, IOException {
         String dbTable;
         if (object instanceof List) {
             dbTable = determineDatabaseTable(((List<?>) object).get(0).getClass());
@@ -66,6 +68,7 @@ public class HttpConnectionManager {
             Objects.requireNonNull(response.body()).close();
             return true;
         }
+        Objects.requireNonNull(response.body()).close();
         return false;
     }
 
@@ -95,10 +98,12 @@ public class HttpConnectionManager {
         StringBuilder url = new StringBuilder(SERVER_URL + dbTable);
         if (identifiers != null && !identifiers.isEmpty()) {
             url.append("?q={");
+            List<String> identifiersInUrl = new LinkedList<>();
             for (String key : identifiers.keySet()) {
-                url.append(surroundWithBoilerplate(key, identifiers.get(key)));
+                identifiersInUrl.add(surroundWithBoilerplate(key, identifiers.get(key)));
             }
-            url.append("}" + "&start=").append(offset).append("&limit=").append(LIMIT_FOR_HTTP_REQUEST_SIZE);
+            url.append(String.join(",", identifiersInUrl))
+                    .append("}" + "&start=").append(offset).append("&limit=").append(LIMIT_FOR_HTTP_REQUEST_SIZE);
         }
 
         Request request = new Request.Builder()
@@ -116,8 +121,51 @@ public class HttpConnectionManager {
         for (int i = 0; i < jsonArray.size(); i++) {
             resultList.add(gson.fromJson(jsonArray.get(i), (Type) clazz));
         }
+        Objects.requireNonNull(response.body()).close();
         return resultList;
+    }
 
+    /*
+    retrieves an aggregate from the database
+    @param clazz the class of the objects that are to be retrieved
+    @param aggregateFunction the aggregate function to be retrieved (like count or max)
+    @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
+    @param identifiers used to identify the objects in the database
+     */
+    public static int getAggregateFromDatabase(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
+                                               Map<String, ?> identifiers) throws ClassNotSupportedByDBException, IOException {
+
+        String dbTable = determineDatabaseTable(clazz);
+        String argumentForAggregateFunctionInURL;
+        if (argumentForAggregateFunction == null || argumentForAggregateFunction.equals("")) {
+            argumentForAggregateFunctionInURL = "*";
+        } else argumentForAggregateFunctionInURL = argumentForAggregateFunction;
+
+        StringBuilder url = new StringBuilder(SERVER_URL + dbTable);
+        if (identifiers != null && !identifiers.isEmpty()) {
+            List<String> identifiersInUrl = new LinkedList<>();
+            for (String key : identifiers.keySet()) {
+                identifiersInUrl.add(surroundWithBoilerplate(key, identifiers.get(key)));
+            }
+            url.append("?q={\"$").append(aggregateFunction).append("\":")
+                    .append("\"").append(argumentForAggregateFunctionInURL).append("\", ")
+                    .append(String.join(",", identifiersInUrl))
+                    .append("}");
+        }
+
+        Request request = new Request.Builder()
+                .url(url.toString())
+                .addHeader("Authorization", AUTHORIZATION_HEADER)
+                .build();
+        Call call = client.newCall(request);
+
+        Response response = call.execute();
+        String responseBodyString = Objects.requireNonNull(response.body()).string();
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
+        return jsonObject.getAsJsonArray("result")
+                .get(0).getAsJsonObject()
+                .get(aggregateFunction).getAsInt();
     }
 
     /*
@@ -148,7 +196,7 @@ public class HttpConnectionManager {
             dbFrames.add(new DBFrame((frame)));
         }
         try {
-            saveObjectsToDatabase(dbFrames);
+            saveObjectToDatabase(dbFrames);
         } catch (ClassNotSupportedByDBException e) {
             e.printStackTrace();
         }
