@@ -190,17 +190,17 @@ public class HttpConnectionManager {
     /*
     convenience method that saves a list of frames to the database
      */
-    public static void saveFramesToDatabase(List<Frame> frames) throws IOException {
+    public static boolean saveFramesToDatabase(List<Frame> frames) throws IOException {
         List<DBFrame> dbFrames = new LinkedList<>();
         for (Frame frame : frames) {
             dbFrames.add(new DBFrame((frame)));
         }
         try {
-            saveObjectToDatabase(dbFrames);
+            return saveObjectToDatabase(dbFrames);
         } catch (ClassNotSupportedByDBException e) {
             e.printStackTrace();
+            return false;
         }
-        System.out.println("size: " + dbFrames.size());
     }
 
     /*
