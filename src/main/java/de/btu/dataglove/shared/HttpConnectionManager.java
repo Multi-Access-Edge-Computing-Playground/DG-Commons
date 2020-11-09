@@ -135,6 +135,42 @@ public class HttpConnectionManager {
     public static int getAggregateFromDatabase(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
                                                Map<String, ?> identifiers) throws ClassNotSupportedByDBException, IOException {
 
+        JsonArray jsonArray = sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers).getAsJsonArray();
+        return jsonArray.get(0).getAsJsonObject().get(aggregateFunction).getAsInt();
+    }
+
+    /*
+    retrieves all names from frames or gestures from the database
+    @param clazz this determines which database table is to be queried
+     */
+    public static List<String> getAllNamesFromDatabase(Class<?> clazz) throws IOException, ClassNotSupportedByDBException {
+        String nameOfColumn;
+        if (clazz.getTypeName().equals(DBFrame.class.getTypeName())) {
+            nameOfColumn = "nameOfTask";
+        } else nameOfColumn = "name";
+
+        JsonArray jsonArray = sendAggregateRequest(clazz, "distinct",
+                nameOfColumn, null).getAsJsonArray();
+        List<String> resultList = new LinkedList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonElement entry = jsonArray.get(i).getAsJsonObject().get(nameOfColumn);
+            if (!entry.isJsonNull()) {
+                resultList.add(entry.getAsString());
+            }
+        }
+        return resultList;
+    }
+
+    /*
+    sends a get request for an aggregate
+    @param clazz the class of the objects that are to be retrieved
+    @param aggregateFunction the aggregate function to be retrieved (like count or max)
+    @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
+    @param identifiers used to identify the objects in the database
+     *///TODO currently not respecting the limit of 1000 entries per request
+    private static JsonElement sendAggregateRequest(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
+                                                    Map<String, ?> identifiers) throws ClassNotSupportedByDBException, IOException {
+
         String dbTable = determineDatabaseTable(clazz);
         String argumentForAggregateFunctionInURL;
         if (argumentForAggregateFunction == null || argumentForAggregateFunction.equals("")) {
@@ -142,16 +178,19 @@ public class HttpConnectionManager {
         } else argumentForAggregateFunctionInURL = argumentForAggregateFunction;
 
         StringBuilder url = new StringBuilder(SERVER_URL + dbTable);
+        url.append("?q={\"$").append(aggregateFunction).append("\":")
+                .append("\"").append(argumentForAggregateFunctionInURL).append("\"");
         if (identifiers != null && !identifiers.isEmpty()) {
+            url.append(", ");
             List<String> identifiersInUrl = new LinkedList<>();
             for (String key : identifiers.keySet()) {
                 identifiersInUrl.add(surroundWithBoilerplate(key, identifiers.get(key)));
             }
-            url.append("?q={\"$").append(aggregateFunction).append("\":")
-                    .append("\"").append(argumentForAggregateFunctionInURL).append("\", ")
-                    .append(String.join(",", identifiersInUrl))
-                    .append("}");
+
+            url.append(String.join(",", identifiersInUrl));
+
         }
+        url.append("}");
 
         Request request = new Request.Builder()
                 .url(url.toString())
@@ -163,9 +202,12 @@ public class HttpConnectionManager {
         String responseBodyString = Objects.requireNonNull(response.body()).string();
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
-        return jsonObject.getAsJsonArray("result")
-                .get(0).getAsJsonObject()
-                .get(aggregateFunction).getAsInt();
+        return jsonObject.get("result");
+
+
+//        return jsonObject.getAsJsonArray("result")
+//                .get(0).getAsJsonObject()
+//                .get(aggregateFunction).getAsInt();
     }
 
     /*
