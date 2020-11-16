@@ -14,10 +14,6 @@ public class SharedConstants {
     public static final int TOTAL_FIELDS_PER_SENSOR = 11;
     public static final int TOTAL_SENSOR_DATA_OF_FRAME = NUMBER_OF_SENSORS * TOTAL_FIELDS_PER_SENSOR;
 
-    //algorithms
-    public static final int USED_ALGORITHM_GESTURE_BOUNDARIES_LINEAR = 0;
-    public static final int USED_ALGORITHM_GESTURE_BOUNDARIES_CIRCULAR = 1;
-
     //exceptions
     public static final String INVALID_SENSOR_NUMBER_EXCEPTION = "INVALID_SENSOR_NUMBER_EXCEPTION";
     public static final String INVALID_ARRAY_INDEX_EXCEPTION = "INVALID_ARRAY_INDEX_EXCEPTION";
