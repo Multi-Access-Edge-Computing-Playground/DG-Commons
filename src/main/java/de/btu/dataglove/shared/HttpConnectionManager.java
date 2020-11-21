@@ -22,6 +22,7 @@ public class HttpConnectionManager {
     private static String NAME_OF_USER_DB;
     private static String NAME_OF_GESTURE_DB;
     private static String NAME_OF_EULER_GESTURE_DB;
+    private static String NAME_OF_TASK_CALCULATOR;
     private static int LIMIT_FOR_HTTP_REQUEST_SIZE;
 
     /*
@@ -29,13 +30,14 @@ public class HttpConnectionManager {
     this way, the server url and authorization header do not need to be part of the public library of this project
      */
     public static void init(String authorizationHeader, String serverUrl, String nameOfFrameDB, String nameOfUserDB,
-                            String nameOfGestureDB, String nameOfEulerGestureDB, int limitForHttpRequestSize) {
+                            String nameOfGestureDB, String nameOfEulerGestureDB, String nameOfTaskCalculator, int limitForHttpRequestSize) {
         AUTHORIZATION_HEADER = authorizationHeader;
         SERVER_URL = serverUrl;
         NAME_OF_FRAME_DB = nameOfFrameDB;
         NAME_OF_USER_DB = nameOfUserDB;
         NAME_OF_GESTURE_DB = nameOfGestureDB;
         NAME_OF_EULER_GESTURE_DB = nameOfEulerGestureDB;
+        NAME_OF_TASK_CALCULATOR = nameOfTaskCalculator;
         LIMIT_FOR_HTTP_REQUEST_SIZE = limitForHttpRequestSize;
     }
 
@@ -273,6 +275,30 @@ public class HttpConnectionManager {
             e.printStackTrace();
         }
         return gestures;
+    }
+
+    /*
+    requests a calculation from the server with the result then being saved to the database.
+    returns the exit code of the task calculator program
+    */
+    public static int requestCalculationFromServer(String encodedArgument) throws IOException {
+        String url = SERVER_URL + NAME_OF_TASK_CALCULATOR +
+                "?argv=[\"" +
+                encodedArgument +
+                "\"]";
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", AUTHORIZATION_HEADER)
+                .build();
+        Call call = client.newCall(request);
+
+        Response response = call.execute();
+        String responseBodyString = Objects.requireNonNull(response.body()).string();
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
+        int exitCode = jsonObject.get("result").getAsInt();
+        Objects.requireNonNull(response.body()).close();
+        return exitCode;
     }
 
     /*
