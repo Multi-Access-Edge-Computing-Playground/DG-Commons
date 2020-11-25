@@ -280,12 +280,14 @@ public class HttpConnectionManager {
     /*
     requests a calculation from the server with the result then being saved to the database.
     returns the exit code of the task calculator program
+    @param encodedArgument the encoded metadata of the task that is to be calculated
+    @param versionOfProgram the version of taskCalculator that is queried. example: 1.0.0
     */
-    public static int requestCalculationFromServer(String encodedArgument) throws IOException {
+    public static int requestCalculationFromServer(String encodedArgument, String versionOfProgram) throws IOException {
         String url = SERVER_URL + NAME_OF_TASK_CALCULATOR +
                 "?argv=[\"" +
                 encodedArgument +
-                "\"]";
+                "\"]&jar=TaskCalculator-" + versionOfProgram + ".jar";
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", AUTHORIZATION_HEADER)
@@ -296,7 +298,7 @@ public class HttpConnectionManager {
         String responseBodyString = Objects.requireNonNull(response.body()).string();
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
-        int exitCode = jsonObject.get("result").getAsInt();
+        int exitCode = jsonObject.get("code").getAsInt();
         Objects.requireNonNull(response.body()).close();
         return exitCode;
     }
