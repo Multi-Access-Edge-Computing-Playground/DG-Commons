@@ -5,12 +5,8 @@ import java.io.Serializable;
 /*
 represents a static gesture
  */
-public class Gesture implements Serializable, Comparable<Gesture> {
+public class Gesture extends AbstractGesture implements Serializable, Comparable<Gesture> {
     private static final long serialVersionUID = -3244143415404822243L;
-    public final String name;
-    public final int typeOfGesture;
-    public final int algorithmUsedForCalculation;
-    public final double[] algorithmParameters;
 
     public final double[] lowerBoundRotScalar;
     public final double[] lowerBoundRotVectorX;
@@ -34,10 +30,7 @@ public class Gesture implements Serializable, Comparable<Gesture> {
                    double[] lowerBoundAccX, double[] lowerBoundAccY, double[] lowerBoundAccZ,
                    double[] upperBoundRotScalar, double[] upperBoundRotVectorX, double[] upperBoundRotVectorY, double[] upperBoundRotVectorZ,
                    double[] upperBoundAccX, double[] upperBoundAccY, double[] upperBoundAccZ) {
-        this.name = name;
-        this.typeOfGesture = typeOfGesture;
-        this.algorithmUsedForCalculation = algorithmUsedForCalculation;
-        this.algorithmParameters = algorithmParameters;
+        super(name, typeOfGesture, algorithmUsedForCalculation, algorithmParameters);
 
         this.lowerBoundRotScalar = lowerBoundRotScalar;
         this.lowerBoundRotVectorX = lowerBoundRotVectorX;
@@ -56,10 +49,7 @@ public class Gesture implements Serializable, Comparable<Gesture> {
     }
 
     public Gesture(String name, int typeOfGesture, int algorithmUsedForCalculation, double[] algorithmParameters, double[] allLowerBoundaries, double[] allUpperBoundaries) {
-        this.name = name;
-        this.typeOfGesture = typeOfGesture;
-        this.algorithmUsedForCalculation = algorithmUsedForCalculation;
-        this.algorithmParameters = algorithmParameters;
+        super(name, typeOfGesture, algorithmUsedForCalculation, algorithmParameters);
 
         lowerBoundRotScalar = extractFieldFromAllBoundariesArray(allLowerBoundaries, 4);
         lowerBoundRotVectorX = extractFieldFromAllBoundariesArray(allLowerBoundaries, 5);

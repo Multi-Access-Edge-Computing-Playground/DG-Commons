@@ -3,12 +3,7 @@ package de.btu.dataglove.shared;
 /*
 represents a static gesture with euler angles instead of quaternions
  */
-public class EulerGesture implements Comparable<EulerGesture> {
-
-    public final String name;
-    public final int typeOfGesture;
-    public final int algorithmUsedForCalculation;
-    public final double[] algorithmParameters;
+public class EulerGesture extends AbstractGesture implements Comparable<EulerGesture> {
 
     public final double[] lowerBoundPhi;
     public final double[] lowerBoundTheta;
@@ -21,10 +16,7 @@ public class EulerGesture implements Comparable<EulerGesture> {
     public EulerGesture(String name, int typeOfGesture, int algorithmUsedForCalculation, double[] algorithmParameters,
                         double[] lowerBoundPhi, double[] lowerBoundTheta, double[] lowerBoundPsi,
                         double[] upperBoundPhi, double[] upperBoundTheta, double[] upperBoundPsi) {
-        this.name = name;
-        this.typeOfGesture = typeOfGesture;
-        this.algorithmUsedForCalculation = algorithmUsedForCalculation;
-        this.algorithmParameters = algorithmParameters;
+        super(name, typeOfGesture, algorithmUsedForCalculation, algorithmParameters);
         this.lowerBoundPhi = lowerBoundPhi;
         this.lowerBoundTheta = lowerBoundTheta;
         this.lowerBoundPsi = lowerBoundPsi;
@@ -35,10 +27,7 @@ public class EulerGesture implements Comparable<EulerGesture> {
 
     public EulerGesture(String name, int typeOfGesture, int algorithmUsedForCalculation,
                         double[] algorithmParameters, double[] allLowerBoundaries, double[] allUpperBoundaries) {
-        this.name = name;
-        this.typeOfGesture = typeOfGesture;
-        this.algorithmUsedForCalculation = algorithmUsedForCalculation;
-        this.algorithmParameters = algorithmParameters;
+        super(name, typeOfGesture, algorithmUsedForCalculation, algorithmParameters);
         lowerBoundPhi = extractFieldFromAllBoundariesArray(allLowerBoundaries, 0);
         lowerBoundTheta = extractFieldFromAllBoundariesArray(allLowerBoundaries, 1);
         lowerBoundPsi = extractFieldFromAllBoundariesArray(allLowerBoundaries, 2);
