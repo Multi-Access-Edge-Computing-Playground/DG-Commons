@@ -1,6 +1,6 @@
 package de.btu.dataglove.shared;
 
-public class AbstractGesture {
+public abstract class AbstractGesture {
     public final String name;
     public final int typeOfGesture;
     public final int algorithmUsedForCalculation;
