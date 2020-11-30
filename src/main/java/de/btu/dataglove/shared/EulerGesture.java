@@ -8,32 +8,55 @@ public class EulerGesture extends AbstractGesture implements Comparable<EulerGes
     public final double[] lowerBoundPhi;
     public final double[] lowerBoundTheta;
     public final double[] lowerBoundPsi;
+    public final double[] lowerBoundAccX;
+    public final double[] lowerBoundAccY;
+    public final double[] lowerBoundAccZ;
 
     public final double[] upperBoundPhi;
     public final double[] upperBoundTheta;
     public final double[] upperBoundPsi;
+    public final double[] upperBoundAccX;
+    public final double[] upperBoundAccY;
+    public final double[] upperBoundAccZ;
 
     public EulerGesture(String name, int typeOfGesture, int algorithmUsedForCalculation, double[] algorithmParameters,
                         double[] lowerBoundPhi, double[] lowerBoundTheta, double[] lowerBoundPsi,
-                        double[] upperBoundPhi, double[] upperBoundTheta, double[] upperBoundPsi) {
+                        double[] lowerBoundAccX, double[] lowerBoundAccY, double[] lowerBoundAccZ,
+                        double[] upperBoundPhi, double[] upperBoundTheta, double[] upperBoundPsi, double[]
+                                upperBoundAccX, double[] upperBoundAccY, double[] upperBoundAccZ) {
         super(name, typeOfGesture, algorithmUsedForCalculation, algorithmParameters);
         this.lowerBoundPhi = lowerBoundPhi;
         this.lowerBoundTheta = lowerBoundTheta;
         this.lowerBoundPsi = lowerBoundPsi;
+        this.lowerBoundAccX = lowerBoundAccX;
+        this.lowerBoundAccY = lowerBoundAccY;
+        this.lowerBoundAccZ = lowerBoundAccZ;
         this.upperBoundPhi = upperBoundPhi;
         this.upperBoundTheta = upperBoundTheta;
         this.upperBoundPsi = upperBoundPsi;
+        this.upperBoundAccX = upperBoundAccX;
+        this.upperBoundAccY = upperBoundAccY;
+        this.upperBoundAccZ = upperBoundAccZ;
     }
 
     public EulerGesture(String name, int typeOfGesture, int algorithmUsedForCalculation,
-                        double[] algorithmParameters, double[] allLowerBoundaries, double[] allUpperBoundaries) {
+                        double[] algorithmParameters, double[] allLowerAngleBoundaries, double[] allUpperAngleBoundaries,
+                        double[] lowerBoundAccX, double[] lowerBoundAccY, double[] lowerBoundAccZ,
+                        double[] upperBoundAccX, double[] upperBoundAccY, double[] upperBoundAccZ) {
         super(name, typeOfGesture, algorithmUsedForCalculation, algorithmParameters);
-        lowerBoundPhi = extractFieldFromAllBoundariesArray(allLowerBoundaries, 0);
-        lowerBoundTheta = extractFieldFromAllBoundariesArray(allLowerBoundaries, 1);
-        lowerBoundPsi = extractFieldFromAllBoundariesArray(allLowerBoundaries, 2);
-        upperBoundPhi = extractFieldFromAllBoundariesArray(allUpperBoundaries, 0);
-        upperBoundTheta = extractFieldFromAllBoundariesArray(allUpperBoundaries, 1);
-        upperBoundPsi = extractFieldFromAllBoundariesArray(allUpperBoundaries, 2);
+        lowerBoundPhi = extractFieldFromAllBoundariesArray(allLowerAngleBoundaries, 0);
+        lowerBoundTheta = extractFieldFromAllBoundariesArray(allLowerAngleBoundaries, 1);
+        lowerBoundPsi = extractFieldFromAllBoundariesArray(allLowerAngleBoundaries, 2);
+        upperBoundPhi = extractFieldFromAllBoundariesArray(allUpperAngleBoundaries, 0);
+        upperBoundTheta = extractFieldFromAllBoundariesArray(allUpperAngleBoundaries, 1);
+        upperBoundPsi = extractFieldFromAllBoundariesArray(allUpperAngleBoundaries, 2);
+
+        this.lowerBoundAccX = lowerBoundAccX;
+        this.lowerBoundAccY = lowerBoundAccY;
+        this.lowerBoundAccZ = lowerBoundAccZ;
+        this.upperBoundAccX = upperBoundAccX;
+        this.upperBoundAccY = upperBoundAccY;
+        this.upperBoundAccZ = upperBoundAccZ;
     }
 
     /*
