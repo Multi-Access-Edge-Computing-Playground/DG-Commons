@@ -5,8 +5,7 @@ import java.io.Serializable;
 /*
 represents a static gesture
  */
-public class Gesture extends AbstractGesture implements Serializable, Comparable<Gesture> {
-    private static final long serialVersionUID = -3244143415404822243L;
+public class Gesture extends AbstractGesture implements Comparable<Gesture> {
 
     public final double[] lowerBoundRotScalar;
     public final double[] lowerBoundRotVectorX;

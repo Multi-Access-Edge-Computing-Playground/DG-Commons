@@ -1,6 +1,9 @@
 package de.btu.dataglove.shared;
 
-public abstract class AbstractGesture {
+import java.io.Serializable;
+
+public abstract class AbstractGesture implements Serializable {
+    private static final long serialVersionUID = -3244143415404822243L;
     public final String name;
     public final int typeOfGesture;
     public final int algorithmUsedForCalculation;
