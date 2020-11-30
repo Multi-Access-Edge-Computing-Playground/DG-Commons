@@ -298,7 +298,7 @@ public class HttpConnectionManager {
         String responseBodyString = Objects.requireNonNull(response.body()).string();
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
-        int exitCode = jsonObject.get("code").getAsInt();
+        int exitCode = jsonObject.get("exitcode").getAsInt();
         Objects.requireNonNull(response.body()).close();
         return exitCode;
     }
