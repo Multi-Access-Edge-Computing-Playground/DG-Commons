@@ -2,7 +2,7 @@ package de.btu.dataglove.shared;
 
 import java.io.Serializable;
 
-public class AbstractFrame implements Serializable {
+public abstract class AbstractFrame implements Serializable {
     private static final long serialVersionUID = 1540638284367827038L;
 
     public String nameOfTask;
