@@ -1,21 +1,12 @@
 package de.btu.dataglove.shared;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 /*
 represents a single frame captured with the data glove
  */
-public class Frame implements Serializable, Comparable<Frame> {
-    private static final long serialVersionUID = 1540638284367827038L;
-
-    public String nameOfTask;
-    public String userName;
-    public final double timeStamp;
-    public final int frameNumber;
-    public int recordingNumber;
-    public int typeOfRecording;
+public class Frame extends AbstractFrame implements Comparable<Frame> {
 
     public final double[] rawRotScalar;
     public final double[] rawRotVectorX;
@@ -48,13 +39,11 @@ public class Frame implements Serializable, Comparable<Frame> {
      */
     public Frame(String nameOfTask, String userName, double timeStamp, int frameNumber, int recordingNumber, int typeOfRecording,
                  double[] rawRotScalar, double[] rawRotVectorX, double[] rawRotVectorY, double[] rawRotVectorZ,
-                 double[] rotScalar, double[] rotVectorX, double[] rotVectorY, double[] rotVectorZ, double[] accX, double[] accY, double[] accZ) {
-        this.nameOfTask = nameOfTask;
-        this.userName = userName;
-        this.timeStamp = timeStamp;
-        this.frameNumber = frameNumber;
-        this.recordingNumber = recordingNumber;
-        this.typeOfRecording = typeOfRecording;
+                 double[] rotScalar, double[] rotVectorX, double[] rotVectorY, double[] rotVectorZ,
+                 double[] accX, double[] accY, double[] accZ) {
+
+        super(nameOfTask, userName, timeStamp, frameNumber, recordingNumber, typeOfRecording);
+
         this.rawRotScalar = rawRotScalar;
         this.rawRotVectorX = rawRotVectorX;
         this.rawRotVectorY = rawRotVectorY;

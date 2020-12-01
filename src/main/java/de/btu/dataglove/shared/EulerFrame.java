@@ -6,14 +6,7 @@ import java.util.List;
 /*
 represents a single frame with quaternions having been converted to euler angles
  */
-public class EulerFrame implements Comparable<EulerFrame> {
-
-    public final String nameOfTask;
-    public final String userName;
-    public final double timeStamp;
-    public final int frameNumber;
-    public final int recordingNumber;
-    public final int typeOfRecording;
+public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> {
 
     public final double[] phi;
     public final double[] theta;
@@ -25,13 +18,9 @@ public class EulerFrame implements Comparable<EulerFrame> {
 
     public EulerFrame(Frame frame) {
 
+        super(frame.nameOfTask, frame.userName, frame.timeStamp,
+                frame.frameNumber, frame.recordingNumber, frame.typeOfRecording);
         nameOfTask = frame.nameOfTask;
-        userName = frame.userName;
-        timeStamp = frame.timeStamp;
-        frameNumber = frame.frameNumber;
-        recordingNumber = frame.recordingNumber;
-        typeOfRecording = frame.typeOfRecording;
-
         accX = frame.accX;
         accY = frame.accY;
         accZ = frame.accZ;
