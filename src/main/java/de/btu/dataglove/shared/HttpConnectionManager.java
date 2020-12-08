@@ -9,6 +9,7 @@ import okhttp3.*;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /*
 this class is used for communicating with the http server
@@ -313,7 +314,10 @@ public class HttpConnectionManager {
                 .url(url)
                 .addHeader("Authorization", AUTHORIZATION_HEADER)
                 .build();
-        Call call = client.newCall(request);
+        OkHttpClient extendedTimeoutClient = client.newBuilder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .build();
+        Call call = extendedTimeoutClient.newCall(request);
 
         Response response = call.execute();
         String responseBodyString = Objects.requireNonNull(response.body()).string();
