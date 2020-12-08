@@ -164,6 +164,27 @@ public class HttpConnectionManager {
     }
 
     /*
+    retrieves the number of recordings of a given task from the database (column numberOfRecordings in the frameDB)
+    @param nameOfTask the name of the task
+     */
+    public static int getNumberOfRecordings(String nameOfTask) throws IOException {
+        Map<String, String> identifiers = new HashMap<>();
+        identifiers.put("nameOfTask", nameOfTask);
+
+        JsonArray jsonArray = null;
+        try {
+            jsonArray = sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers).getAsJsonArray();
+            JsonElement result = jsonArray.get(0).getAsJsonObject().get("max");
+            if (result.isJsonNull()) return 0;
+            else return result.getAsInt();
+        } catch (ClassNotSupportedByDBException e) {
+            e.printStackTrace();
+            System.exit(-1);
+            return Integer.MAX_VALUE;
+        }
+    }
+
+    /*
     sends a get request for an aggregate
     @param clazz the class of the objects that are to be retrieved
     @param aggregateFunction the aggregate function to be retrieved (like count or max)
