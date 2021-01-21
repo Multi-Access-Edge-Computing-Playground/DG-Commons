@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/*
+/**
 this class is used for communicating with the http server
  */
 public class HttpConnectionManager {
@@ -26,7 +26,7 @@ public class HttpConnectionManager {
     private static String NAME_OF_TASK_CALCULATOR;
     private static int LIMIT_FOR_HTTP_REQUEST_SIZE;
 
-    /*
+    /**
     this method needs to be called once by the application before communicating with the server
     this way, the server url and authorization header do not need to be part of the public library of this project
      */
@@ -42,7 +42,7 @@ public class HttpConnectionManager {
         LIMIT_FOR_HTTP_REQUEST_SIZE = limitForHttpRequestSize;
     }
 
-    /*
+    /**
     saves an object to the database.
     the object can also be a list containing supported elements
     returns true on success, returns false otherwise
@@ -75,7 +75,7 @@ public class HttpConnectionManager {
         return false;
     }
 
-    /*
+    /**
     retrieves a list of objects from the database
     @param clazz the class of the objects that are to be retrieved
     @param identifiers used to identify the objects in the database
@@ -128,7 +128,7 @@ public class HttpConnectionManager {
         return resultList;
     }
 
-    /*
+    /**
     retrieves an aggregate from the database
     @param clazz the class of the objects that are to be retrieved
     @param aggregateFunction the aggregate function to be retrieved (like count or max)
@@ -142,7 +142,7 @@ public class HttpConnectionManager {
         return jsonArray.get(0).getAsJsonObject().get(aggregateFunction).getAsInt();
     }
 
-    /*
+    /**
     retrieves all names from frames or gestures from the database
     @param clazz this determines which database table is to be queried
      */
@@ -164,7 +164,7 @@ public class HttpConnectionManager {
         return resultList;
     }
 
-    /*
+    /**
     retrieves the number of recordings of a given task from the database (column numberOfRecordings in the frameDB)
     @param nameOfTask the name of the task
      */
@@ -185,7 +185,7 @@ public class HttpConnectionManager {
         }
     }
 
-    /*
+    /**
     sends a get request for an aggregate
     @param clazz the class of the objects that are to be retrieved
     @param aggregateFunction the aggregate function to be retrieved (like count or max)
@@ -234,7 +234,7 @@ public class HttpConnectionManager {
 //                .get(aggregateFunction).getAsInt();
     }
 
-    /*
+    /**
     convenience method that retrieves a list of frames from the database based on their nameOfTask
      */
     public static List<Frame> getFramesFromDatabase(String nameOfTask) throws IOException {
@@ -253,7 +253,7 @@ public class HttpConnectionManager {
         return frames;
     }
 
-    /*
+    /**
     convenience method that saves a list of frames to the database
      */
     public static boolean saveFramesToDatabase(List<Frame> frames) throws IOException {
@@ -269,7 +269,7 @@ public class HttpConnectionManager {
         }
     }
 
-    /*
+    /**
     convenience method that retrieves a list of gestures from the database based on their name
      */
     public static List<Gesture> getGesturesFromDatabase(String name) throws IOException {
@@ -284,7 +284,7 @@ public class HttpConnectionManager {
         return gestures;
     }
 
-    /*
+    /**
     convenience method that retrieves a list of eulerGestures from the database based on their name
     */
     public static List<EulerGesture> getEulerGesturesFromDatabase(String name) throws IOException {
@@ -299,7 +299,7 @@ public class HttpConnectionManager {
         return gestures;
     }
 
-    /*
+    /**
     requests a calculation from the server with the result then being saved to the database.
     returns the exit code of the task calculator program
     @param encodedArgument the encoded metadata of the task that is to be calculated
@@ -328,7 +328,7 @@ public class HttpConnectionManager {
         return exitCode;
     }
 
-    /*
+    /**
     each class has their own equivalent table in the database. This returns the table for a given class
      */
     private static String determineDatabaseTable(Class<?> clazz) throws ClassNotSupportedByDBException {
@@ -344,7 +344,7 @@ public class HttpConnectionManager {
         throw new ClassNotSupportedByDBException(clazz);
     }
 
-    /*
+    /**
     surrounds an attribute/value pair with additional chars that are needed for it to be used in the http request
      */
     private static String surroundWithBoilerplate(String attribute, Object value) {
@@ -358,7 +358,7 @@ public class HttpConnectionManager {
         return firstPart + secondPart;
     }
 
-    /*
+    /**
     adds some boilerplate that is needed by the http server when sending data in the http request body
     */
     private static String addBoilerplateToJson(String json) {
