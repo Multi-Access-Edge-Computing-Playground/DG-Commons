@@ -7,10 +7,11 @@ import java.util.Map;
 represents algorithms used to calculate gestures
  */
 public enum Algorithms {
-    STATIC_GESTURE_LINEAR(0),
-    STATIC_GESTURE_CIRCULAR(1);
+    STATIC_GESTURE_LINEAR(0, 1),
+    STATIC_GESTURE_CIRCULAR(1, 1);
 
-    private final int value;
+    private final int value; //the value representing the algorithm in the database
+    private final int numberOfParameters;
 
     //reverse lookup for getting the corresponding algorithm from an int
     private static final Map<Integer, Algorithms> lookup = new HashMap<>();
@@ -21,8 +22,9 @@ public enum Algorithms {
         }
     }
 
-    Algorithms(int value) {
+    Algorithms(int value, int numberOfParameters) {
         this.value = value;
+        this.numberOfParameters = numberOfParameters;
     }
 
     public int toInt() {
@@ -34,11 +36,6 @@ public enum Algorithms {
     }
 
     public int getNumberOfParameters() {
-        switch(value) {
-            case 0:
-            case 1:
-                return 1;
-            default: return 0;
-        }
+        return numberOfParameters;
     }
 }
