@@ -245,6 +245,7 @@ public class HttpConnectionManager {
     public static boolean saveRecognitionLogToDatabase(String nameOfLog, Map<AbstractFrame, Boolean> framesMap, AbstractGesture gesture) throws IOException {
         List<RecognitionLog> logs = new LinkedList<>();
         for (AbstractFrame frame : framesMap.keySet()) {
+            frame.nameOfTask = nameOfLog;
             logs.add(new RecognitionLog(nameOfLog, frame, framesMap.get(frame), gesture));
         }
         return saveObjectToDatabase(logs);
@@ -317,12 +318,18 @@ public class HttpConnectionManager {
         Call call = extendedTimeoutClient.newCall(request);
 
         Response response = call.execute();
-        String responseBodyString = Objects.requireNonNull(response.body()).string();
-        Gson gson = new Gson();
-        JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
-        int exitCode = jsonObject.get("exitcode").getAsInt();
-        Objects.requireNonNull(response.body()).close();
-        return exitCode;
+        try {
+            String responseBodyString = Objects.requireNonNull(response.body()).string();
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
+            int exitCode = jsonObject.get("exitcode").getAsInt();
+            Objects.requireNonNull(response.body()).close();
+            return exitCode;
+        } catch (NullPointerException e) {
+            throw new IOException("server response not as expected");
+        }
+
+
     }
 
     /**
