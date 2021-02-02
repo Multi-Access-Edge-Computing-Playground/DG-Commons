@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
-this class is used for communicating with the http server
+ * this class is used for communicating with the http server
  */
 public class HttpConnectionManager {
 
@@ -24,14 +24,15 @@ public class HttpConnectionManager {
     private static String NAME_OF_GESTURE_DB;
     private static String NAME_OF_EULER_GESTURE_DB;
     private static String NAME_OF_TASK_CALCULATOR;
+    private static String NAME_OF_RECOGNITION_LOG;
     private static int LIMIT_FOR_HTTP_REQUEST_SIZE;
 
     /**
-    this method needs to be called once by the application before communicating with the server
-    this way, the server url and authorization header do not need to be part of the public library of this project
+     * this method needs to be called once by the application before communicating with the server
+     * this way, the server url and authorization header do not need to be part of the public library of this project
      */
     public static void init(String authorizationHeader, String serverUrl, String nameOfFrameDB, String nameOfUserDB,
-                            String nameOfGestureDB, String nameOfEulerGestureDB, String nameOfTaskCalculator, int limitForHttpRequestSize) {
+                            String nameOfGestureDB, String nameOfEulerGestureDB, String nameOfTaskCalculator, String nameOfRecognitionLog, int limitForHttpRequestSize) {
         AUTHORIZATION_HEADER = authorizationHeader;
         SERVER_URL = serverUrl;
         NAME_OF_FRAME_DB = nameOfFrameDB;
@@ -39,15 +40,16 @@ public class HttpConnectionManager {
         NAME_OF_GESTURE_DB = nameOfGestureDB;
         NAME_OF_EULER_GESTURE_DB = nameOfEulerGestureDB;
         NAME_OF_TASK_CALCULATOR = nameOfTaskCalculator;
+        NAME_OF_RECOGNITION_LOG = nameOfRecognitionLog;
         LIMIT_FOR_HTTP_REQUEST_SIZE = limitForHttpRequestSize;
     }
 
     /**
-    saves an object to the database.
-    the object can also be a list containing supported elements
-    returns true on success, returns false otherwise
+     * saves an object to the database.
+     * the object can also be a list containing supported elements
+     * returns true on success, returns false otherwise
      */
-    public static boolean saveObjectToDatabase(Object object) throws ClassNotSupportedByDBException, IOException {
+    public static boolean saveObjectToDatabase(Object object) throws IOException {
         String dbTable;
         if (object instanceof List) {
             dbTable = determineDatabaseTable(((List<?>) object).get(0).getClass());
@@ -76,11 +78,12 @@ public class HttpConnectionManager {
     }
 
     /**
-    retrieves a list of objects from the database
-    @param clazz the class of the objects that are to be retrieved
-    @param identifiers used to identify the objects in the database
+     * retrieves a list of objects from the database
+     *
+     * @param clazz       the class of the objects that are to be retrieved
+     * @param identifiers used to identify the objects in the database
      */
-    public static <T> List<T> getObjectsFromDatabase(Class<T> clazz, Map<String, ?> identifiers) throws ClassNotSupportedByDBException, IOException {
+    public static <T> List<T> getObjectsFromDatabase(Class<T> clazz, Map<String, ?> identifiers) throws IOException {
         int offset = 0;
         boolean allObjectsReceived = false;
         List<T> objects = new LinkedList<>();
@@ -95,7 +98,7 @@ public class HttpConnectionManager {
         return objects;
     }
 
-    private static <T> List<T> sendGetRequestToDatabase(Class<T> clazz, Map<String, ?> identifiers, int offset) throws ClassNotSupportedByDBException, IOException {
+    private static <T> List<T> sendGetRequestToDatabase(Class<T> clazz, Map<String, ?> identifiers, int offset) throws IOException {
         String dbTable = determineDatabaseTable(clazz);
 
         StringBuilder url = new StringBuilder(SERVER_URL + dbTable);
@@ -129,24 +132,26 @@ public class HttpConnectionManager {
     }
 
     /**
-    retrieves an aggregate from the database
-    @param clazz the class of the objects that are to be retrieved
-    @param aggregateFunction the aggregate function to be retrieved (like count or max)
-    @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
-    @param identifiers used to identify the objects in the database
+     * retrieves an aggregate from the database
+     *
+     * @param clazz                        the class of the objects that are to be retrieved
+     * @param aggregateFunction            the aggregate function to be retrieved (like count or max)
+     * @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
+     * @param identifiers                  used to identify the objects in the database
      */
     public static int getAggregateFromDatabase(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
-                                               Map<String, ?> identifiers) throws ClassNotSupportedByDBException, IOException {
+                                               Map<String, ?> identifiers) throws IOException {
 
         JsonArray jsonArray = sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers).getAsJsonArray();
         return jsonArray.get(0).getAsJsonObject().get(aggregateFunction).getAsInt();
     }
 
     /**
-    retrieves all names from frames or gestures from the database
-    @param clazz this determines which database table is to be queried
+     * retrieves all names from frames or gestures from the database
+     *
+     * @param clazz this determines which database table is to be queried
      */
-    public static List<String> getAllNamesFromDatabase(Class<?> clazz) throws IOException, ClassNotSupportedByDBException {
+    public static List<String> getAllNamesFromDatabase(Class<?> clazz) throws IOException {
         String nameOfColumn;
         if (clazz.getTypeName().equals(DBFrame.class.getTypeName())) {
             nameOfColumn = "nameOfTask";
@@ -165,35 +170,31 @@ public class HttpConnectionManager {
     }
 
     /**
-    retrieves the number of recordings of a given task from the database (column numberOfRecordings in the frameDB)
-    @param nameOfTask the name of the task
+     * retrieves the number of recordings of a given task from the database (column numberOfRecordings in the frameDB)
+     *
+     * @param nameOfTask the name of the task
      */
     public static int getNumberOfRecordings(String nameOfTask) throws IOException {
         Map<String, String> identifiers = new HashMap<>();
         identifiers.put("nameOfTask", nameOfTask);
 
-        JsonArray jsonArray = null;
-        try {
-            jsonArray = sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers).getAsJsonArray();
-            JsonElement result = jsonArray.get(0).getAsJsonObject().get("max");
-            if (result.isJsonNull()) return 0;
-            else return result.getAsInt();
-        } catch (ClassNotSupportedByDBException e) {
-            e.printStackTrace();
-            System.exit(-1);
-            return Integer.MAX_VALUE;
-        }
+        JsonArray jsonArray = sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers).getAsJsonArray();
+        JsonElement result = jsonArray.get(0).getAsJsonObject().get("max");
+        if (result.isJsonNull()) return 0;
+        else return result.getAsInt();
+
     }
 
     /**
-    sends a get request for an aggregate
-    @param clazz the class of the objects that are to be retrieved
-    @param aggregateFunction the aggregate function to be retrieved (like count or max)
-    @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
-    @param identifiers used to identify the objects in the database
+     * sends a get request for an aggregate
+     *
+     * @param clazz                        the class of the objects that are to be retrieved
+     * @param aggregateFunction            the aggregate function to be retrieved (like count or max)
+     * @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
+     * @param identifiers                  used to identify the objects in the database
      *///TODO currently not respecting the limit of 1000 entries per request
     private static JsonElement sendAggregateRequest(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
-                                                    Map<String, ?> identifiers) throws ClassNotSupportedByDBException, IOException {
+                                                    Map<String, ?> identifiers) throws IOException {
 
         String dbTable = determineDatabaseTable(clazz);
         String argumentForAggregateFunctionInURL;
@@ -235,17 +236,29 @@ public class HttpConnectionManager {
     }
 
     /**
-    convenience method that retrieves a list of frames from the database based on their nameOfTask
+     * saves a recognition log to the database
+     *
+     * @param nameOfLog     name of the log
+     * @param framesMap     frames that were checked against the gesture and a boolean indicating whether they were recognized
+     * @param gesture       the gesture that was being checked against
+     */
+    public static boolean saveRecognitionLogToDatabase(String nameOfLog, Map<AbstractFrame, Boolean> framesMap, AbstractGesture gesture) throws IOException {
+        List<RecognitionLog> logs = new LinkedList<>();
+        for (AbstractFrame frame : framesMap.keySet()) {
+            logs.add(new RecognitionLog(nameOfLog, frame, framesMap.get(frame), gesture));
+        }
+        return saveObjectToDatabase(logs);
+    }
+
+    /**
+     * convenience method that retrieves a list of frames from the database based on their nameOfTask
      */
     public static List<Frame> getFramesFromDatabase(String nameOfTask) throws IOException {
         Map<String, String> identifiers = new HashMap<>();
         identifiers.put("nameOfTask", nameOfTask);
-        List<DBFrame> dbFrames = null;
-        try {
-            dbFrames = getObjectsFromDatabase(DBFrame.class, identifiers);
-        } catch (ClassNotSupportedByDBException e) {
-            e.printStackTrace();
-        }
+
+        List<DBFrame> dbFrames = getObjectsFromDatabase(DBFrame.class, identifiers);
+
         List<Frame> frames = new LinkedList<>();
         for (DBFrame dbFrame : Objects.requireNonNull(dbFrames)) {
             frames.add(dbFrame.convertToFrame());
@@ -254,57 +267,41 @@ public class HttpConnectionManager {
     }
 
     /**
-    convenience method that saves a list of frames to the database
+     * convenience method that saves a list of frames to the database
      */
     public static boolean saveFramesToDatabase(List<Frame> frames) throws IOException {
         List<DBFrame> dbFrames = new LinkedList<>();
         for (Frame frame : frames) {
             dbFrames.add(new DBFrame((frame)));
         }
-        try {
-            return saveObjectToDatabase(dbFrames);
-        } catch (ClassNotSupportedByDBException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return saveObjectToDatabase(dbFrames);
     }
 
     /**
-    convenience method that retrieves a list of gestures from the database based on their name
+     * convenience method that retrieves a list of gestures from the database based on their name
      */
     public static List<Gesture> getGesturesFromDatabase(String name) throws IOException {
         Map<String, String> map = new HashMap<>();
         map.put("name", name);
-        List<Gesture> gestures = new LinkedList<>();
-        try {
-            gestures = getObjectsFromDatabase(Gesture.class, map);
-        } catch (ClassNotSupportedByDBException e) {
-            e.printStackTrace();
-        }
-        return gestures;
+        return getObjectsFromDatabase(Gesture.class, map);
     }
 
     /**
-    convenience method that retrieves a list of eulerGestures from the database based on their name
-    */
+     * convenience method that retrieves a list of eulerGestures from the database based on their name
+     */
     public static List<EulerGesture> getEulerGesturesFromDatabase(String name) throws IOException {
         Map<String, String> map = new HashMap<>();
         map.put("name", name);
-        List<EulerGesture> gestures = new LinkedList<>();
-        try {
-            gestures = getObjectsFromDatabase(EulerGesture.class, map);
-        } catch (ClassNotSupportedByDBException e) {
-            e.printStackTrace();
-        }
-        return gestures;
+        return getObjectsFromDatabase(EulerGesture.class, map);
     }
 
     /**
-    requests a calculation from the server with the result then being saved to the database.
-    returns the exit code of the task calculator program
-    @param encodedArgument the encoded metadata of the task that is to be calculated
-    @param versionOfProgram the version of taskCalculator that is queried. example: 1.0.0
-    */
+     * requests a calculation from the server with the result then being saved to the database.
+     * returns the exit code of the task calculator program
+     *
+     * @param encodedArgument  the encoded metadata of the task that is to be calculated
+     * @param versionOfProgram the version of taskCalculator that is queried. example: 1.0.0
+     */
     public static int requestCalculationFromServer(String encodedArgument, String versionOfProgram) throws IOException {
         String url = SERVER_URL + NAME_OF_TASK_CALCULATOR +
                 "?argv=[\"" +
@@ -329,9 +326,9 @@ public class HttpConnectionManager {
     }
 
     /**
-    each class has their own equivalent table in the database. This returns the table for a given class
+     * each class has their own equivalent table in the database. This returns the table for a given class
      */
-    private static String determineDatabaseTable(Class<?> clazz) throws ClassNotSupportedByDBException {
+    private static String determineDatabaseTable(Class<?> clazz) {
         if (clazz.getTypeName().equals(Gesture.class.getTypeName())) {
             return NAME_OF_GESTURE_DB;
         }
@@ -341,11 +338,14 @@ public class HttpConnectionManager {
         if (clazz.getTypeName().equals(DBFrame.class.getTypeName())) {
             return NAME_OF_FRAME_DB;
         }
-        throw new ClassNotSupportedByDBException(clazz);
+        if (clazz.getTypeName().equals(RecognitionLog.class.getTypeName())) {
+            return NAME_OF_RECOGNITION_LOG;
+        }
+        throw new AssertionError("class not supported by db: " + clazz);
     }
 
     /**
-    surrounds an attribute/value pair with additional chars that are needed for it to be used in the http request
+     * surrounds an attribute/value pair with additional chars that are needed for it to be used in the http request
      */
     private static String surroundWithBoilerplate(String attribute, Object value) {
         String firstPart = "\"\\\"" + attribute + "\\\"\" : ";
@@ -359,15 +359,53 @@ public class HttpConnectionManager {
     }
 
     /**
-    adds some boilerplate that is needed by the http server when sending data in the http request body
-    */
+     * adds some boilerplate that is needed by the http server when sending data in the http request body
+     */
     private static String addBoilerplateToJson(String json) {
         return "{\"values\":" + json + "}";
     }
 
-    public static class ClassNotSupportedByDBException extends Exception {
-        private ClassNotSupportedByDBException(Class<?> clazz) {
-            super("Class not supported by db: " + clazz);
+    private static class RecognitionLog {
+        String name; //name of the log
+        boolean wasRecognized;
+
+        String frameDB_nameOfTask;
+        int frameDB_recordingNumber;
+        int frameDB_frameNumber;
+
+        String gesture_name;
+        int gesture_algorithmUsedForCalculation;
+        double[] gesture_algorithmParameters;
+
+        String euler_name;
+        int euler_algorithmUsedForCalculation;
+        double[] euler_algorithmParameters;
+
+        private RecognitionLog(String nameOfLog, AbstractFrame frame, boolean wasRecognized, AbstractGesture gesture) {
+            name = nameOfLog;
+            this.wasRecognized = wasRecognized;
+            if (frame instanceof Frame) {
+                frameDB_nameOfTask = frame.nameOfTask;
+                frameDB_frameNumber = frame.frameNumber;
+                frameDB_recordingNumber = frame.recordingNumber;
+            } else {
+                throw new AssertionError("only Frame.class is supported");
+            }
+
+            if (gesture instanceof Gesture) {
+                gesture_name = gesture.name;
+                gesture_algorithmUsedForCalculation = gesture.algorithmUsedForCalculation;
+                gesture_algorithmParameters = gesture.algorithmParameters;
+            } else {
+                if (gesture instanceof EulerGesture) {
+                    euler_name = gesture.name;
+                    euler_algorithmUsedForCalculation = gesture.algorithmUsedForCalculation;
+                    euler_algorithmParameters = gesture.algorithmParameters;
+                } else {
+                    throw new AssertionError("only Gesture.class and EulerGEsture.class are supported");
+                }
+            }
         }
     }
+
 }
