@@ -65,8 +65,11 @@ public class HttpConnectionManager {
                 .addHeader("Authorization", AUTHORIZATION_HEADER)
                 .post(body)
                 .build();
+        OkHttpClient extendedTimeoutClient = client.newBuilder()
+                .connectTimeout(0, TimeUnit.MILLISECONDS)
+                .build();
+        Call call = extendedTimeoutClient.newCall(request);
 
-        okhttp3.Call call = client.newCall(request);
         Response response = call.execute();
         System.out.println("http response code: " + response.code());
         if (response.code() == 200 || response.code() == 201) {
@@ -244,11 +247,19 @@ public class HttpConnectionManager {
      */
     public static boolean saveRecognitionLogToDatabase(String nameOfLog, Map<AbstractFrame, Boolean> framesMap, AbstractGesture gesture) throws IOException {
         List<RecognitionLog> logs = new LinkedList<>();
+        List<Frame> frames = new LinkedList<>();
         for (AbstractFrame frame : framesMap.keySet()) {
             frame.nameOfTask = nameOfLog;
+            frame.typeOfRecording = gesture.typeOfGesture;
+            frame.recordingNumber = 0;
             logs.add(new RecognitionLog(nameOfLog, frame, framesMap.get(frame), gesture));
+            if (frame instanceof Frame) {
+                frames.add((Frame) frame);
+            } else throw new AssertionError("type of frame not currently supported");
         }
-        return saveObjectToDatabase(logs);
+        boolean savingFramesWorked = saveFramesToDatabase(frames);
+        boolean savingLogsWorked = saveObjectToDatabase(logs);
+        return savingFramesWorked && savingLogsWorked;
     }
 
     /**
@@ -372,6 +383,9 @@ public class HttpConnectionManager {
         return "{\"values\":" + json + "}";
     }
 
+    /**
+    a RecognitionLog as it is represented in the database
+     */
     private static class RecognitionLog {
         String name; //name of the log
         boolean wasRecognized;
@@ -409,10 +423,9 @@ public class HttpConnectionManager {
                     euler_algorithmUsedForCalculation = gesture.algorithmUsedForCalculation;
                     euler_algorithmParameters = gesture.algorithmParameters;
                 } else {
-                    throw new AssertionError("only Gesture.class and EulerGEsture.class are supported");
+                    throw new AssertionError("only Gesture.class and EulerGesture.class are supported");
                 }
             }
         }
     }
-
 }
