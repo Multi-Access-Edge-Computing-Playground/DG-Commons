@@ -8,13 +8,13 @@ represents a single frame with quaternions having been converted to euler angles
  */
 public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> {
 
-    public final double[] phi;
-    public final double[] theta;
-    public final double[] psi;
+    private final double[] phi;
+    private final double[] theta;
+    private final double[] psi;
 
-    public final double[] accX;
-    public final double[] accY;
-    public final double[] accZ;
+    private final double[] accX;
+    private final double[] accY;
+    private final double[] accZ;
 
     public EulerFrame(Frame frame) {
 
@@ -34,14 +34,61 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
         for (int i = 0; i < SharedConstants.NUMBER_OF_SENSORS; i++) {
             x = 2 * (frame.rawRotScalar[i] * frame.rawRotVectorX[i] + frame.rawRotVectorY[i] * frame.rawRotVectorZ[i]);
             y = 1 - 2 * (Math.pow(frame.rawRotVectorX[i], 2) + Math.pow(frame.rawRotVectorY[i], 2));
-            phi[i] = Math.toDegrees(Math.atan2(x, y));
+            phi[i] = Math.atan2(x, y);
 
-            theta[i] = Math.toDegrees(Math.asin(2 * (frame.rawRotScalar[i] * frame.rawRotVectorY[i] - frame.rawRotVectorZ[i] * frame.rawRotVectorX[i])));
+            theta[i] = Math.asin(2 * (frame.rawRotScalar[i] * frame.rawRotVectorY[i] - frame.rawRotVectorZ[i] * frame.rawRotVectorX[i]));
 
             x = 2 * (frame.rawRotScalar[i] * frame.rawRotVectorZ[i] + frame.rawRotVectorX[i] * frame.rawRotVectorY[i]);
             y = 1 - 2 * (Math.pow(frame.rawRotVectorY[i], 2) + Math.pow(frame.rawRotVectorZ[i], 2));
-            psi[i] = Math.toDegrees(Math.atan2(x, y));
+            psi[i] = Math.atan2(x, y);
         }
+    }
+    public double[] getPhiAsRadian() {
+        return phi;
+    }
+
+    public double[] getThetaAsRadian() {
+        return theta;
+    }
+
+    public double[] getPsiAsRadian() {
+        return psi;
+    }
+
+    public double[] getPhiAsDegrees() {
+        double[] result = new double[phi.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Math.toDegrees(phi[i]);
+        }
+        return result;
+    }
+
+    public double[] getThetaAsDegrees() {
+        double[] result = new double[theta.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Math.toDegrees(theta[i]);
+        }
+        return result;
+    }
+
+    public double[] getPsiAsDegrees() {
+        double[] result = new double[psi.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Math.toDegrees(psi[i]);
+        }
+        return result;
+    }
+
+    public double[] getAccX() {
+        return accX;
+    }
+
+    public double[] getAccY() {
+        return accY;
+    }
+
+    public double[] getAccZ() {
+        return accZ;
     }
 
     public void makeAnglesPositive() {
