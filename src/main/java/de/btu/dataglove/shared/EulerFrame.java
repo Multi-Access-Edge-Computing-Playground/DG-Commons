@@ -91,21 +91,21 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
         return accZ;
     }
 
-    public void makeAnglesPositive() {
-        for (int i = 0; i < SharedConstants.NUMBER_OF_SENSORS; i++) {
-            if (phi[i] < 0) {
-                phi[i] += 360;
-            }
-
-            if (theta[i] < 0) {
-                theta[i] += 360;
-            }
-
-            if (psi[i] < 0) {
-                psi[i] += 360;
-            }
-        }
-    }
+//    public void makeAnglesPositive() {
+//        for (int i = 0; i < SharedConstants.NUMBER_OF_SENSORS; i++) {
+//            if (phi[i] < 0) {
+//                phi[i] += 360;
+//            }
+//
+//            if (theta[i] < 0) {
+//                theta[i] += 360;
+//            }
+//
+//            if (psi[i] < 0) {
+//                psi[i] += 360;
+//            }
+//        }
+//    }
 
     /*
     returns all angles in a single array
