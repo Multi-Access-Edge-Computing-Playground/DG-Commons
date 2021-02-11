@@ -1,6 +1,8 @@
 package de.btu.dataglove.shared;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -99,6 +101,12 @@ public class SharedUtility {
             result[i] = sensorValues;
         }
         return result;
+    }
+
+    public static void createFileAndWriteJson(String json, File outputFile) throws IOException {
+        if (outputFile.createNewFile()) System.out.println("file" + outputFile.getName() + "created!");;
+        Files.writeString(Path.of(outputFile.getPath()), json);
+        System.out.println("your file can be found here: " + outputFile.getPath());
     }
 
     public static class InvalidSensorNumberException extends Exception {
