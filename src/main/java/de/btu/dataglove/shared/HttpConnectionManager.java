@@ -145,12 +145,13 @@ public class HttpConnectionManager {
 
         JsonElement element = sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers);
         if (element.isJsonNull()) return Optional.empty();
-        return Optional.of(element
+        JsonElement result = element
                 .getAsJsonArray()
                 .get(0)
                 .getAsJsonObject()
-                .get(aggregateFunction)
-                .getAsInt());
+                .get(aggregateFunction);
+        if (result.isJsonNull()) return Optional.empty();
+        return Optional.of(result.getAsInt());
     }
 
     /**
@@ -189,12 +190,13 @@ public class HttpConnectionManager {
         identifiers.put("nameOfTask", nameOfTask);
         JsonElement element =  sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers);
         if (element.isJsonNull()) return 0;
-        return element.getAsJsonArray()
+        JsonElement result = element.getAsJsonArray()
                 .getAsJsonArray()
                 .get(0)
                 .getAsJsonObject()
-                .get("max")
-                .getAsInt();
+                .get("max");
+        if (result.isJsonNull()) return 0;
+        return result.getAsInt();
     }
 
     /**
