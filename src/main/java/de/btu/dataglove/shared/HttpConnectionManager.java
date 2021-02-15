@@ -263,6 +263,73 @@ public class HttpConnectionManager {
     }
 
     /**
+     *
+     * @param nameOfLog
+     * @return
+     * @throws IOException
+     */
+    public static String getRecognitionLogFromDatabase(String nameOfLog) throws IOException {
+        Map<String, String> identifiersLog = new HashMap<>();
+        identifiersLog.put("name", nameOfLog);
+        List<RecognitionLog> logs = getObjectsFromDatabase(RecognitionLog.class, identifiersLog);
+        if (logs.get(0).gesture_name == null && logs.get(0).euler_name == null) throw new IOException("gesture name and euler name are both null"); //method has to be updated for each new algorithm
+
+        List<Frame> frames = getFramesFromDatabase(nameOfLog);
+
+        Map<String, Object> identifiersGesture = new HashMap<>();
+        AbstractGesture gesture = null;
+        if (logs.get(0).gesture_name != null) {
+            identifiersGesture.put("name", logs.get(0).gesture_name);
+            identifiersGesture.put("algorithmUsedForCalculation", logs.get(0).gesture_algorithmUsedForCalculation);
+            identifiersGesture.put("algorithmParameters", Arrays.toString(logs.get(0).gesture_algorithmParameters)); //TODO THIS DOESN'T WORK
+            gesture = getObjectsFromDatabase(Gesture.class, identifiersGesture).get(0);
+        }
+        if (logs.get(0).euler_name != null) {
+            identifiersGesture.put("name", logs.get(0).euler_name);
+            identifiersGesture.put("algorithmUsedForCalculation", logs.get(0).euler_algorithmUsedForCalculation);
+            identifiersGesture.put("algorithmParameters", Arrays.toString(logs.get(0).euler_algorithmParameters)); //TODO THIS DOESN'T WORK
+            gesture = getObjectsFromDatabase(EulerGesture.class, identifiersGesture).get(0);
+        }
+
+        Map<Frame, Boolean> logMap = new HashMap<>();
+        for (RecognitionLog log : logs) {
+            Frame frame = findFrameByFrameNumber(frames, log.frameDB_frameNumber);
+            logMap.put(frame, log.wasRecognized);
+        }
+        return formatLog(logMap, gesture);
+    }
+
+    /**
+     * finds a frame of a list based on its frameNumber
+     * @param frames a list of frames
+     * @param frameNumber the frameNumber
+     * @return the frame you've been looking for
+     * @throws IOException if the frame is unable to be found
+     */
+    private static Frame findFrameByFrameNumber(List<Frame> frames, int frameNumber) throws IOException {
+        for (Frame frame : frames) {
+            if (frame.frameNumber == frameNumber) {
+                return frame;
+            }
+        }
+        throw new IOException("frame with frameNumber " + frameNumber + "not found ");
+    }
+
+    /**
+     *
+     * @param logMap contains a Boolean for each frame indicating whether it was recognized or not
+     * @param gesture the gesture that was being checked
+     * @return a String containing the Log
+     */
+    private static String formatLog(Map<Frame, Boolean> logMap, AbstractGesture gesture) {
+        Gson gson = new Gson();
+        String gestureJson = gson.toJson(gesture);
+        String framesJson = gson.toJson(logMap);
+
+        return gestureJson + "\n\n\n" + framesJson;
+    }
+
+    /**
      * convenience method that retrieves a list of frames from the database based on their nameOfTask
      */
     public static List<Frame> getFramesFromDatabase(String nameOfTask) throws IOException {
