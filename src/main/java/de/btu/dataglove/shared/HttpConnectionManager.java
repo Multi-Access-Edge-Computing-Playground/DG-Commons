@@ -142,11 +142,11 @@ public class HttpConnectionManager {
      * @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
      * @param identifiers                  used to identify the objects in the database
      */
-    public static int getAggregateFromDatabase(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
+    public static Optional<Integer> getAggregateFromDatabase(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
                                                Map<String, ?> identifiers) throws IOException {
 
         JsonArray jsonArray = sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers).getAsJsonArray();
-        return jsonArray.get(0).getAsJsonObject().get(aggregateFunction).getAsInt();
+        return Optional.of(jsonArray.get(0).getAsJsonObject().get(aggregateFunction).getAsInt());
     }
 
     /**
@@ -230,12 +230,9 @@ public class HttpConnectionManager {
         String responseBodyString = Objects.requireNonNull(response.body()).string();
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
+        if (jsonObject.isJsonNull()) return jsonObject;
         return jsonObject.get("result");
 
-
-//        return jsonObject.getAsJsonArray("result")
-//                .get(0).getAsJsonObject()
-//                .get(aggregateFunction).getAsInt();
     }
 
     /**
