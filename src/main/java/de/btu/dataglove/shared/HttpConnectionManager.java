@@ -1,9 +1,6 @@
 package de.btu.dataglove.shared;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -146,13 +143,14 @@ public class HttpConnectionManager {
     public static Optional<Integer> getAggregateFromDatabase(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
                                                              Map<String, ?> identifiers) throws IOException {
 
-        return sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers)
-                .map(jsonElement -> jsonElement
-                        .getAsJsonArray()
-                        .get(0)
-                        .getAsJsonObject()
-                        .get(aggregateFunction)
-                        .getAsInt());
+        JsonElement element = sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers);
+        if (element.isJsonNull()) return Optional.empty();
+        return Optional.of(element
+                .getAsJsonArray()
+                .get(0)
+                .getAsJsonObject()
+                .get(aggregateFunction)
+                .getAsInt());
     }
 
     /**
@@ -167,10 +165,10 @@ public class HttpConnectionManager {
         } else nameOfColumn = "name";
 
         List<String> resultList = new LinkedList<>();
-        Optional<JsonElement> jsonElement = sendAggregateRequest(clazz, "distinct",
+        JsonElement jsonElement = sendAggregateRequest(clazz, "distinct",
                 nameOfColumn, null);
-        if (jsonElement.isPresent()) {
-            JsonArray jsonArray = jsonElement.get().getAsJsonArray();
+        if (!jsonElement.isJsonNull()) {
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonElement entry = jsonArray.get(i).getAsJsonObject().get(nameOfColumn);
                 if (!entry.isJsonNull()) {
@@ -189,14 +187,14 @@ public class HttpConnectionManager {
     public static int getNumberOfRecordings(String nameOfTask) throws IOException {
         Map<String, String> identifiers = new HashMap<>();
         identifiers.put("nameOfTask", nameOfTask);
-        //returns 0 if the jsonElement is not present
-        return sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers)
-                .map(element -> element
-                        .getAsJsonArray()
-                        .get(0)
-                        .getAsJsonObject()
-                        .get("max")
-                        .getAsInt()).orElse(0);
+        JsonElement element =  sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers);
+        if (element.isJsonNull()) return 0;
+        return element.getAsJsonArray()
+                .getAsJsonArray()
+                .get(0)
+                .getAsJsonObject()
+                .get("max")
+                .getAsInt();
     }
 
     /**
@@ -207,7 +205,7 @@ public class HttpConnectionManager {
      * @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
      * @param identifiers                  used to identify the objects in the database
      *///TODO currently not respecting the limit of 1000 entries per request
-    private static Optional<JsonElement> sendAggregateRequest(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
+    private static JsonElement sendAggregateRequest(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
                                                               Map<String, ?> identifiers) throws IOException {
 
         String dbTable = determineDatabaseTable(clazz);
@@ -239,11 +237,10 @@ public class HttpConnectionManager {
 
         Response response = call.execute();
         String responseBodyString = Objects.requireNonNull(response.body()).string();
-        if (response.code() == 204) return Optional.empty();
+        if (response.code() == 204) return JsonNull.INSTANCE;
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
-        return Optional.ofNullable(jsonObject.get("result"));
-
+        return jsonObject.get("result");
     }
 
     /**
