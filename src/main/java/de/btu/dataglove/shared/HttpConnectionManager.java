@@ -141,12 +141,18 @@ public class HttpConnectionManager {
      * @param aggregateFunction            the aggregate function to be retrieved (like count or max)
      * @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
      * @param identifiers                  used to identify the objects in the database
+     * @return an Optional that will be empty if the aggregate function doesn't return anything
      */
     public static Optional<Integer> getAggregateFromDatabase(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
-                                               Map<String, ?> identifiers) throws IOException {
+                                                             Map<String, ?> identifiers) throws IOException {
 
-        JsonArray jsonArray = sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers).getAsJsonArray();
-        return Optional.of(jsonArray.get(0).getAsJsonObject().get(aggregateFunction).getAsInt());
+        return sendAggregateRequest(clazz, aggregateFunction, argumentForAggregateFunction, identifiers)
+                .map(jsonElement -> jsonElement
+                        .getAsJsonArray()
+                        .get(0)
+                        .getAsJsonObject()
+                        .get(aggregateFunction)
+                        .getAsInt());
     }
 
     /**
@@ -160,13 +166,16 @@ public class HttpConnectionManager {
             nameOfColumn = "nameOfTask";
         } else nameOfColumn = "name";
 
-        JsonArray jsonArray = sendAggregateRequest(clazz, "distinct",
-                nameOfColumn, null).getAsJsonArray();
         List<String> resultList = new LinkedList<>();
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JsonElement entry = jsonArray.get(i).getAsJsonObject().get(nameOfColumn);
-            if (!entry.isJsonNull()) {
-                resultList.add(entry.getAsString());
+        Optional<JsonElement> jsonElement = sendAggregateRequest(clazz, "distinct",
+                nameOfColumn, null);
+        if (jsonElement.isPresent()) {
+            JsonArray jsonArray = jsonElement.get().getAsJsonArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonElement entry = jsonArray.get(i).getAsJsonObject().get(nameOfColumn);
+                if (!entry.isJsonNull()) {
+                    resultList.add(entry.getAsString());
+                }
             }
         }
         return resultList;
@@ -180,12 +189,14 @@ public class HttpConnectionManager {
     public static int getNumberOfRecordings(String nameOfTask) throws IOException {
         Map<String, String> identifiers = new HashMap<>();
         identifiers.put("nameOfTask", nameOfTask);
-
-        JsonArray jsonArray = sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers).getAsJsonArray();
-        JsonElement result = jsonArray.get(0).getAsJsonObject().get("max");
-        if (result.isJsonNull()) return 0;
-        else return result.getAsInt();
-
+        //returns 0 if the jsonElement is not present
+        return sendAggregateRequest(DBFrame.class, "max", "recordingNumber", identifiers)
+                .map(element -> element
+                        .getAsJsonArray()
+                        .get(0)
+                        .getAsJsonObject()
+                        .get("max")
+                        .getAsInt()).orElse(0);
     }
 
     /**
@@ -196,8 +207,8 @@ public class HttpConnectionManager {
      * @param argumentForAggregateFunction the argument for the aggregate function (leaving this empty will send * as the argument)
      * @param identifiers                  used to identify the objects in the database
      *///TODO currently not respecting the limit of 1000 entries per request
-    private static JsonElement sendAggregateRequest(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
-                                                    Map<String, ?> identifiers) throws IOException {
+    private static Optional<JsonElement> sendAggregateRequest(Class<?> clazz, String aggregateFunction, String argumentForAggregateFunction,
+                                                              Map<String, ?> identifiers) throws IOException {
 
         String dbTable = determineDatabaseTable(clazz);
         String argumentForAggregateFunctionInURL;
@@ -228,19 +239,19 @@ public class HttpConnectionManager {
 
         Response response = call.execute();
         String responseBodyString = Objects.requireNonNull(response.body()).string();
+        if (response.code() == 204) return Optional.empty();
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(responseBodyString, JsonObject.class);
-        if (jsonObject.isJsonNull()) return jsonObject;
-        return jsonObject.get("result");
+        return Optional.ofNullable(jsonObject.get("result"));
 
     }
 
     /**
      * saves a recognition log to the database
      *
-     * @param nameOfLog     name of the log
-     * @param framesMap     frames that were checked against the gesture and a boolean indicating whether they were recognized
-     * @param gesture       the gesture that was being checked against
+     * @param nameOfLog name of the log
+     * @param framesMap frames that were checked against the gesture and a boolean indicating whether they were recognized
+     * @param gesture   the gesture that was being checked against
      */
     public static boolean saveRecognitionLogToDatabase(String nameOfLog, Map<AbstractFrame, Boolean> framesMap, AbstractGesture gesture) throws IOException {
         List<RecognitionLog> logs = new LinkedList<>();
@@ -260,7 +271,6 @@ public class HttpConnectionManager {
     }
 
     /**
-     *
      * @param nameOfLog
      * @return
      * @throws IOException
@@ -269,7 +279,8 @@ public class HttpConnectionManager {
         Map<String, String> identifiersLog = new HashMap<>();
         identifiersLog.put("name", nameOfLog);
         List<RecognitionLog> logs = getObjectsFromDatabase(RecognitionLog.class, identifiersLog);
-        if (logs.get(0).gesture_name == null && logs.get(0).euler_name == null) throw new IOException("gesture name and euler name are both null"); //method has to be updated for each new algorithm
+        if (logs.get(0).gesture_name == null && logs.get(0).euler_name == null)
+            throw new IOException("gesture name and euler name are both null"); //method has to be updated for each new algorithm
 
         List<Frame> frames = getFramesFromDatabase(nameOfLog);
 
@@ -298,7 +309,8 @@ public class HttpConnectionManager {
 
     /**
      * finds a frame of a list based on its frameNumber
-     * @param frames a list of frames
+     *
+     * @param frames      a list of frames
      * @param frameNumber the frameNumber
      * @return the frame you've been looking for
      * @throws IOException if the frame is unable to be found
@@ -313,8 +325,7 @@ public class HttpConnectionManager {
     }
 
     /**
-     *
-     * @param logMap contains a Boolean for each frame indicating whether it was recognized or not
+     * @param logMap  contains a Boolean for each frame indicating whether it was recognized or not
      * @param gesture the gesture that was being checked
      * @return a String containing the Log
      */
@@ -448,7 +459,7 @@ public class HttpConnectionManager {
     }
 
     /**
-    a RecognitionLog as it is represented in the database
+     * a RecognitionLog as it is represented in the database
      */
     private static class RecognitionLog {
         String name; //name of the log
