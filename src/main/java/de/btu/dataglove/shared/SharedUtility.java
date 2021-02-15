@@ -103,12 +103,6 @@ public class SharedUtility {
         return result;
     }
 
-    public static void createFileAndWriteJson(String json, File outputFile) throws IOException {
-        if (outputFile.createNewFile()) System.out.println("file" + outputFile.getName() + "created!");;
-        Files.writeString(Path.of(outputFile.getPath()), json);
-        System.out.println("your file can be found here: " + outputFile.getPath());
-    }
-
     public static class InvalidSensorNumberException extends Exception {
         private static final long serialVersionUID = 612554581182062L;
 
