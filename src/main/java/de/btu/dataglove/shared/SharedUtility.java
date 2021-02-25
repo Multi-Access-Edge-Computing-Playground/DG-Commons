@@ -1,7 +1,5 @@
 package de.btu.dataglove.shared;
 
-import com.google.gson.Gson;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,17 +63,24 @@ public class SharedUtility {
     }
 
     /*
-    serializes an object to JSON using gson
+    serializes and encodes an object
     */
-    public static String serializeObject(Object object) throws IOException {
-        return new Gson().toJson(object);
+    public static String serializeObject(Serializable serializable) throws IOException {
+        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+        ObjectOutputStream so = new ObjectOutputStream(bo);
+        so.writeObject(serializable);
+        so.flush();
+        return new String(Base64.getEncoder().encode(bo.toByteArray()));
     }
 
     /*
-    deserializes an object from JSON using gson
+     * decodes and deserializes an object
      */
-    public static <T> T deserializeObject(String serializedObject, Class<T> clazz) {
-        return new Gson().fromJson(serializedObject, clazz);
+    public static Object deserializeObject(String encodedObject) throws IOException, ClassNotFoundException {
+        byte[] b = Base64.getDecoder().decode(encodedObject.getBytes());
+        ByteArrayInputStream bi = new ByteArrayInputStream(b);
+        ObjectInputStream si = new ObjectInputStream(bi);
+        return si.readObject();
     }
 
     /*
