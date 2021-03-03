@@ -1,4 +1,6 @@
-package de.btu.dataglove.shared;
+package de.btu.dataglove.shared.webservice;
+
+import de.btu.dataglove.shared.Frame;
 
 /*
 represents a single frame like it's stored in the database

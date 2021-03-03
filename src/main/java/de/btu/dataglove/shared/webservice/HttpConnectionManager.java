@@ -1,6 +1,7 @@
-package de.btu.dataglove.shared;
+package de.btu.dataglove.shared.webservice;
 
 import com.google.gson.*;
+import de.btu.dataglove.shared.*;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class HttpConnectionManager {
     private static String NAME_OF_EULER_GESTURE_DB;
     private static String NAME_OF_TASK_CALCULATOR;
     private static String NAME_OF_RECOGNITION_LOG;
+    private static String NAME_OF_RECOGNITION_GESTURE_TABLE;
     private static int LIMIT_FOR_HTTP_REQUEST_SIZE;
 
     /**
@@ -29,7 +31,8 @@ public class HttpConnectionManager {
      * this way, the server url and authorization header do not need to be part of the public library of this project
      */
     public static void init(String authorizationHeader, String serverUrl, String nameOfFrameDB, String nameOfUserDB,
-                            String nameOfGestureDB, String nameOfEulerGestureDB, String nameOfTaskCalculator, String nameOfRecognitionLog, int limitForHttpRequestSize) {
+                            String nameOfGestureDB, String nameOfEulerGestureDB, String nameOfTaskCalculator,
+                            String nameOfRecognitionLog, String nameOfRecognitionGestureTable, int limitForHttpRequestSize) {
         AUTHORIZATION_HEADER = authorizationHeader;
         SERVER_URL = serverUrl;
         NAME_OF_FRAME_DB = nameOfFrameDB;
@@ -38,6 +41,7 @@ public class HttpConnectionManager {
         NAME_OF_EULER_GESTURE_DB = nameOfEulerGestureDB;
         NAME_OF_TASK_CALCULATOR = nameOfTaskCalculator;
         NAME_OF_RECOGNITION_LOG = nameOfRecognitionLog;
+        NAME_OF_RECOGNITION_GESTURE_TABLE = nameOfRecognitionGestureTable;
         LIMIT_FOR_HTTP_REQUEST_SIZE = limitForHttpRequestSize;
     }
 
@@ -413,8 +417,11 @@ public class HttpConnectionManager {
         } catch (NullPointerException e) {
             throw new IOException("server response not as expected");
         }
+    }
 
-
+    public static boolean sendRecognizedGesturesToServer(double timeStamp, Map<Integer, Double> recognizedGestures) throws IOException {
+        RecognitionGesture rg = new RecognitionGesture(timeStamp, recognizedGestures);
+        return saveObjectToDatabase(rg);
     }
 
     /**
@@ -432,6 +439,9 @@ public class HttpConnectionManager {
         }
         if (clazz.getTypeName().equals(RecognitionLog.class.getTypeName())) {
             return NAME_OF_RECOGNITION_LOG;
+        }
+        if (clazz.getTypeName().equals(RecognitionGesture.class.getTypeName())) {
+            return NAME_OF_RECOGNITION_GESTURE_TABLE;
         }
         throw new AssertionError("class not supported by db: " + clazz);
     }
@@ -457,49 +467,8 @@ public class HttpConnectionManager {
         return "{\"values\":" + json + "}";
     }
 
-    /**
-     * a RecognitionLog as it is represented in the database
-     */
-    private static class RecognitionLog {
-        String name; //name of the log
-        boolean wasRecognized;
 
-        String frameDB_nameOfTask;
-        int frameDB_recordingNumber;
-        int frameDB_frameNumber;
 
-        String gesture_name;
-        int gesture_algorithmUsedForCalculation;
-        double[] gesture_algorithmParameters;
 
-        String euler_name;
-        int euler_algorithmUsedForCalculation;
-        double[] euler_algorithmParameters;
 
-        private RecognitionLog(String nameOfLog, AbstractFrame frame, boolean wasRecognized, AbstractGesture gesture) {
-            name = nameOfLog;
-            this.wasRecognized = wasRecognized;
-            if (frame instanceof Frame) {
-                frameDB_nameOfTask = frame.nameOfTask;
-                frameDB_frameNumber = frame.frameNumber;
-                frameDB_recordingNumber = frame.recordingNumber;
-            } else {
-                throw new AssertionError("only Frame.class is supported");
-            }
-
-            if (gesture instanceof Gesture) {
-                gesture_name = gesture.name;
-                gesture_algorithmUsedForCalculation = gesture.algorithmUsedForCalculation;
-                gesture_algorithmParameters = gesture.algorithmParameters;
-            } else {
-                if (gesture instanceof EulerGesture) {
-                    euler_name = gesture.name;
-                    euler_algorithmUsedForCalculation = gesture.algorithmUsedForCalculation;
-                    euler_algorithmParameters = gesture.algorithmParameters;
-                } else {
-                    throw new AssertionError("only Gesture.class and EulerGesture.class are supported");
-                }
-            }
-        }
-    }
 }
