@@ -1,5 +1,8 @@
 package de.btu.dataglove.shared;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /*
 represents the different kinds of recordings
  */
@@ -19,6 +22,19 @@ public enum TypeOfGesture {
 
     public int toInt() {
         return value;
+    }
+
+    //reverse lookup for getting the corresponding type from an int
+    private static final Map<Integer, TypeOfGesture> lookup = new HashMap<>();
+
+    static {
+        for (TypeOfGesture t : TypeOfGesture.values()) {
+            lookup.put(t.toInt(), t);
+        }
+    }
+
+    public static TypeOfGesture get(int valueOfTypeOfGesture) {
+        return lookup.get(valueOfTypeOfGesture);
     }
 
     public boolean isSensorNumberRelevant(int sensorNumber) {
