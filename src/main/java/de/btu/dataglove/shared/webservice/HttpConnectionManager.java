@@ -72,7 +72,6 @@ public class HttpConnectionManager {
         Call call = extendedTimeoutClient.newCall(request);
 
         Response response = call.execute();
-        System.out.println("http response code: " + response.code());
         if (response.code() == 200 || response.code() == 201) {
             Objects.requireNonNull(response.body()).close();
             return true;
