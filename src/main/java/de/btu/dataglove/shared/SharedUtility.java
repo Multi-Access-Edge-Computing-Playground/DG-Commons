@@ -20,46 +20,44 @@ public class SharedUtility {
                 .toArray();
     }
 
-    public static int getArrayPositionOfSensor(int sensorNumber) throws  InvalidSensorNumberException {
-        switch (sensorNumber) {
-            case 24: return 0;
-            case 25: return 1;
-            case 26: return 2;
-            case 27: return 3;
-            case 28: return 4;
-            case 29: return 5;
-            case 30: return 6;
-            case 40: return 7;
-            case 41: return 8;
-            case 42: return 9;
-            case 43: return 10;
-            case 44: return 11;
-            case 45: return 12;
-            case 46: return 13;
-            default:
-                throw new InvalidSensorNumberException(sensorNumber);
-        }
+    public static int getArrayPositionOfSensor(int sensorNumber) {
+        return switch (sensorNumber) {
+            case 24 -> 0;
+            case 25 -> 1;
+            case 26 -> 2;
+            case 27 -> 3;
+            case 28 -> 4;
+            case 29 -> 5;
+            case 30 -> 6;
+            case 40 -> 7;
+            case 41 -> 8;
+            case 42 -> 9;
+            case 43 -> 10;
+            case 44 -> 11;
+            case 45 -> 12;
+            case 46 -> 13;
+            default -> throw new AssertionError("sensorNumber " + sensorNumber + " is invalid");
+        };
     }
 
-    public static int getSensorNumberFromArrayIndex(int arrayIndex) throws InvalidArrayIndexException {
-        switch (arrayIndex) {
-            case 0: return 24;
-            case 1: return 25;
-            case 2: return 26;
-            case 3: return 27;
-            case 4: return 28;
-            case 5: return 29;
-            case 6: return 30;
-            case 7: return 40;
-            case 8: return 41;
-            case 9: return 42;
-            case 10: return 43;
-            case 11: return 44;
-            case 12: return 45;
-            case 13: return 46;
-            default:
-                throw new InvalidArrayIndexException(arrayIndex);
-        }
+    public static int getSensorNumberFromArrayIndex(int arrayIndex) {
+        return switch (arrayIndex) {
+            case 0 -> 24;
+            case 1 -> 25;
+            case 2 -> 26;
+            case 3 -> 27;
+            case 4 -> 28;
+            case 5 -> 29;
+            case 6 -> 30;
+            case 7 -> 40;
+            case 8 -> 41;
+            case 9 -> 42;
+            case 10 -> 43;
+            case 11 -> 44;
+            case 12 -> 45;
+            case 13 -> 46;
+            default -> throw new AssertionError("arrayIndex " + arrayIndex + " is invalid");
+        };
     }
 
     /*
@@ -101,21 +99,5 @@ public class SharedUtility {
             result[i] = sensorValues;
         }
         return result;
-    }
-
-    public static class InvalidSensorNumberException extends Exception {
-        private static final long serialVersionUID = 612554581182062L;
-
-        private InvalidSensorNumberException(int sensorNumber) {
-            super(SharedConstants.INVALID_SENSOR_NUMBER_EXCEPTION + sensorNumber);
-        }
-    }
-
-    public static class InvalidArrayIndexException extends Exception {
-        private static final long serialVersionUID = -4772924540264831249L;
-
-        private InvalidArrayIndexException(int arrayIndex) {
-            super(SharedConstants.INVALID_ARRAY_INDEX_EXCEPTION + arrayIndex);
-        }
     }
 }
