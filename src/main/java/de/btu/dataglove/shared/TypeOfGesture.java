@@ -20,4 +20,21 @@ public enum TypeOfGesture {
     public int toInt() {
         return value;
     }
+
+    public boolean isSensorNumberRelevant(int sensorNumber) {
+        switch(this) {
+            case STATIC_GESTURE_LEFT: case DYNAMIC_GESTURE_LEFT: return isSensorNumberPartOfLeftGlove(sensorNumber);
+            case STATIC_GESTURE_RIGHT: case DYNAMIC_GESTURE_RIGHT: return isSensorNumberPartOfRightGlove(sensorNumber);
+            case STATIC_GESTURE_BOTH: case DYNAMIC_GESTURE_BOTH: return (isSensorNumberPartOfLeftGlove(sensorNumber) || isSensorNumberPartOfRightGlove(sensorNumber));
+            default: throw new AssertionError();
+        }
+    }
+
+    private boolean isSensorNumberPartOfLeftGlove(int sensorNumber) {
+        return (sensorNumber >= SharedConstants.GLOVE_ONE_LOWEST_SENSOR_ID && sensorNumber <= SharedConstants.GLOVE_ONE_HIGHEST_SENSOR_ID);
+    }
+
+    private boolean isSensorNumberPartOfRightGlove(int sensorNumber) {
+        return (sensorNumber >= SharedConstants.GLOVE_TWO_LOWEST_SENSOR_ID && sensorNumber <= SharedConstants.GLOVE_TWO_HIGHEST_SENSOR_ID);
+    }
 }
