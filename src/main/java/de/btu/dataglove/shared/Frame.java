@@ -1,5 +1,7 @@
 package de.btu.dataglove.shared;
 
+import de.btu.dataglove.shared.webservice.DBFrame;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +21,9 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
     public final double[] accX;
     public final double[] accY;
     public final double[] accZ;
+
+    private transient EulerFrame eulerRepresentation;
+    private transient DBFrame dbRepresentation;
 
     /*
     constructor for a frame. Arrays - sensor matching as follows:
@@ -88,6 +93,20 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
     @Override
     public int compareTo(Frame f) {
         return Integer.compare(frameNumber, f.frameNumber);
+    }
+
+    public EulerFrame getEulerRepresentation() {
+        if (eulerRepresentation == null) {
+            eulerRepresentation = new EulerFrame(this);
+        }
+        return eulerRepresentation;
+    }
+
+    public DBFrame getDbRepresentation() {
+        if (dbRepresentation == null) {
+            dbRepresentation = new DBFrame(this);
+        }
+        return dbRepresentation;
     }
 }
 
