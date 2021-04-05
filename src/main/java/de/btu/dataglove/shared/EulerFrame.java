@@ -110,7 +110,7 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
     }
 
     @Override
-    public int compareTo(EulerFrame o) {
-        return nameOfTask.compareTo(o.nameOfTask);
+    public int compareTo(EulerFrame f) {
+        return Integer.compare(frameNumber, f.frameNumber);
     }
 }
