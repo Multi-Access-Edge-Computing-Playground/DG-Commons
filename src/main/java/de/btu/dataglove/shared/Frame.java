@@ -23,6 +23,7 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
     public final double[] accZ;
 
     private transient EulerFrame eulerRepresentation;
+    private transient EulerDiffFrame eulerDiffRepresentation;
     private transient DBFrame dbRepresentation;
 
     /*
@@ -100,6 +101,13 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
             eulerRepresentation = new EulerFrame(this);
         }
         return eulerRepresentation;
+    }
+
+    public EulerDiffFrame getEulerDiffRepresentation() {
+        if (eulerDiffRepresentation == null) {
+            eulerDiffRepresentation = new EulerDiffFrame(this);
+        }
+        return eulerDiffRepresentation;
     }
 
     public DBFrame getDbRepresentation() {

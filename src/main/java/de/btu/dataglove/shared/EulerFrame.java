@@ -20,7 +20,6 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
 
         super(frame.nameOfTask, frame.userName, frame.timeStamp,
                 frame.frameNumber, frame.recordingNumber, frame.typeOfRecording);
-        nameOfTask = frame.nameOfTask;
         accX = frame.accX;
         accY = frame.accY;
         accZ = frame.accZ;
