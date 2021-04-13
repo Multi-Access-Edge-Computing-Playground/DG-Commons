@@ -134,6 +134,31 @@ public class HttpConnectionManager {
         return resultList;
     }
 
+    public static boolean sendDeleteRequestToDatabase(Class<?> clazz, Map<String, ?> identifiers) throws IOException {
+        String dbTable = determineDatabaseTable(clazz);
+
+        StringBuilder url = new StringBuilder(SERVER_URL + dbTable);
+        if (identifiers != null && !identifiers.isEmpty()) {
+            url.append("?q={");
+            List<String> identifiersInUrl = new LinkedList<>();
+            for (String key : identifiers.keySet()) {
+                identifiersInUrl.add(surroundWithBoilerplate(key, identifiers.get(key)));
+            }
+            url.append(String.join(",", identifiersInUrl));
+//                    .append("}" + "&start=").append(offset).append("&limit=").append(LIMIT_FOR_HTTP_REQUEST_SIZE);
+        }
+
+        Request request = new Request.Builder()
+                .url(url.toString())
+                .addHeader("Authorization", AUTHORIZATION_HEADER)
+                .delete()
+                .build();
+        Call call = client.newCall(request);
+
+        Response response = call.execute();
+        return response.code() == 200 || response.code() == 204;
+    }
+
     /**
      * retrieves an aggregate from the database
      *
