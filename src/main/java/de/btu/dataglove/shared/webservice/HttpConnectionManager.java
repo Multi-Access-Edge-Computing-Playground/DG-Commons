@@ -24,6 +24,7 @@ public class HttpConnectionManager {
     private static String NAME_OF_TASK_CALCULATOR;
     private static String NAME_OF_RECOGNITION_LOG;
     private static String NAME_OF_RECOGNITION_GESTURE_TABLE;
+    private static String NAME_OF_ROBOT_ACTION_TABLE;
     private static int LIMIT_FOR_HTTP_REQUEST_SIZE;
 
     /**
@@ -32,7 +33,8 @@ public class HttpConnectionManager {
      */
     public static void init(String authorizationHeader, String serverUrl, String nameOfFrameDB, String nameOfUserDB,
                             String nameOfGestureDB, String nameOfEulerGestureDB, String nameOfTaskCalculator,
-                            String nameOfRecognitionLog, String nameOfRecognitionGestureTable, int limitForHttpRequestSize) {
+                            String nameOfRecognitionLog, String nameOfRecognitionGestureTable, String nameOfRobotActionTable,
+                            int limitForHttpRequestSize) {
         AUTHORIZATION_HEADER = authorizationHeader;
         SERVER_URL = serverUrl;
         NAME_OF_FRAME_DB = nameOfFrameDB;
@@ -42,6 +44,7 @@ public class HttpConnectionManager {
         NAME_OF_TASK_CALCULATOR = nameOfTaskCalculator;
         NAME_OF_RECOGNITION_LOG = nameOfRecognitionLog;
         NAME_OF_RECOGNITION_GESTURE_TABLE = nameOfRecognitionGestureTable;
+        NAME_OF_ROBOT_ACTION_TABLE = nameOfRobotActionTable;
         LIMIT_FOR_HTTP_REQUEST_SIZE = limitForHttpRequestSize;
     }
 
@@ -471,6 +474,10 @@ public class HttpConnectionManager {
         if (clazz.getTypeName().equals(RecognitionGesture.class.getTypeName())) {
             return NAME_OF_RECOGNITION_GESTURE_TABLE;
         }
+        if (clazz.getTypeName().equals(RobotAction.class.getTypeName())) {
+            return NAME_OF_ROBOT_ACTION_TABLE;
+        }
+
         throw new AssertionError("class not supported by db: " + clazz);
     }
 
