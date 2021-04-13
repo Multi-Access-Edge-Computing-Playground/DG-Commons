@@ -409,6 +409,10 @@ public class HttpConnectionManager {
         return getObjectsFromDatabase(EulerGesture.class, map);
     }
 
+    public static boolean clearRecognitionGestureTable() throws IOException {
+        return sendDeleteRequestToDatabase(RecognitionGesture.class, null);
+    }
+
     /**
      * requests a calculation from the server with the result then being saved to the database.
      * returns the exit code of the task calculator program
