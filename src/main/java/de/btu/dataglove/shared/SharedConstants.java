@@ -15,7 +15,20 @@ public class SharedConstants {
     public static final int TOTAL_FIELDS_PER_SENSOR = 11;
     public static final int TOTAL_SENSOR_DATA_OF_FRAME = NUMBER_OF_SENSORS * TOTAL_FIELDS_PER_SENSOR;
 
+    //web service paths
+    public static final String WEB_SERVICE_TASK_CALCULATOR = "/data-glove/rest/v1/task-calculator";
+    public static final String DB_TABLE_FRAME_DB = "/data-glove/rest/v1/frameDB";
+    public static final String DB_TABLE_USER = "/data-glove/rest/v1/user";
+    public static final String DB_TABLE_GESTURE = "/data-glove/rest/v1/Gesture";
+    public static final String DB_TABLE_EULER_GESTURE = "/data-glove/rest/v1/Euler";
+    public static final String DB_TABLE_RECOGNITION_LOG = "/data-glove/rest/v1/RecognitionLog";
+    public static final String DB_TABLE_RECOGNITION_GESTURE = "/data-glove/rest/v1/RecognitionGesture";
+    public static final String DB_TABLE_ROBOT_ACTION = "/data-glove/rest/v1/RobotAction";
+    public static final String DB_TABLE_OBJECT_TRACKING = "/data-glove/rest/v1/ObjectTracking";
+
+
     //exceptions
     public static final String INVALID_SENSOR_NUMBER_EXCEPTION = "INVALID_SENSOR_NUMBER_EXCEPTION";
     public static final String INVALID_ARRAY_INDEX_EXCEPTION = "INVALID_ARRAY_INDEX_EXCEPTION";
+
 }

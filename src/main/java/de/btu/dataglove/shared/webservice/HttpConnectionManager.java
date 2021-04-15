@@ -17,34 +17,15 @@ public class HttpConnectionManager {
     private static final OkHttpClient client = new OkHttpClient();
     private static String AUTHORIZATION_HEADER;
     private static String SERVER_URL;
-    private static String NAME_OF_FRAME_DB;
-    private static String NAME_OF_USER_DB;
-    private static String NAME_OF_GESTURE_DB;
-    private static String NAME_OF_EULER_GESTURE_DB;
-    private static String NAME_OF_TASK_CALCULATOR;
-    private static String NAME_OF_RECOGNITION_LOG;
-    private static String NAME_OF_RECOGNITION_GESTURE_TABLE;
-    private static String NAME_OF_ROBOT_ACTION_TABLE;
     private static int LIMIT_FOR_HTTP_REQUEST_SIZE;
 
     /**
      * this method needs to be called once by the application before communicating with the server
      * this way, the server url and authorization header do not need to be part of the public library of this project
      */
-    public static void init(String authorizationHeader, String serverUrl, String nameOfFrameDB, String nameOfUserDB,
-                            String nameOfGestureDB, String nameOfEulerGestureDB, String nameOfTaskCalculator,
-                            String nameOfRecognitionLog, String nameOfRecognitionGestureTable, String nameOfRobotActionTable,
-                            int limitForHttpRequestSize) {
+    public static void init(String authorizationHeader, String serverUrl, int limitForHttpRequestSize) {
         AUTHORIZATION_HEADER = authorizationHeader;
         SERVER_URL = serverUrl;
-        NAME_OF_FRAME_DB = nameOfFrameDB;
-        NAME_OF_USER_DB = nameOfUserDB;
-        NAME_OF_GESTURE_DB = nameOfGestureDB;
-        NAME_OF_EULER_GESTURE_DB = nameOfEulerGestureDB;
-        NAME_OF_TASK_CALCULATOR = nameOfTaskCalculator;
-        NAME_OF_RECOGNITION_LOG = nameOfRecognitionLog;
-        NAME_OF_RECOGNITION_GESTURE_TABLE = nameOfRecognitionGestureTable;
-        NAME_OF_ROBOT_ACTION_TABLE = nameOfRobotActionTable;
         LIMIT_FOR_HTTP_REQUEST_SIZE = limitForHttpRequestSize;
     }
 
@@ -424,7 +405,7 @@ public class HttpConnectionManager {
      * @param versionOfProgram the version of taskCalculator that is queried. example: 1.0.0
      */
     public static int requestCalculationFromServer(String encodedArgument, String versionOfProgram) throws IOException {
-        String url = SERVER_URL + NAME_OF_TASK_CALCULATOR +
+        String url = SERVER_URL + SharedConstants.WEB_SERVICE_TASK_CALCULATOR +
                 "?argv=[\"" +
                 encodedArgument +
                 "\"]&jar=TaskCalculator-" + versionOfProgram + ".jar";
@@ -460,22 +441,22 @@ public class HttpConnectionManager {
      */
     private static String determineDatabaseTable(Class<?> clazz) {
         if (clazz.getTypeName().equals(Gesture.class.getTypeName())) {
-            return NAME_OF_GESTURE_DB;
+            return SharedConstants.DB_TABLE_GESTURE;
         }
         if (clazz.getTypeName().equals(EulerGesture.class.getTypeName())) {
-            return NAME_OF_EULER_GESTURE_DB;
+            return SharedConstants.DB_TABLE_EULER_GESTURE;
         }
         if (clazz.getTypeName().equals(DBFrame.class.getTypeName())) {
-            return NAME_OF_FRAME_DB;
+            return SharedConstants.DB_TABLE_FRAME_DB;
         }
         if (clazz.getTypeName().equals(RecognitionLog.class.getTypeName())) {
-            return NAME_OF_RECOGNITION_LOG;
+            return SharedConstants.DB_TABLE_RECOGNITION_LOG;
         }
         if (clazz.getTypeName().equals(RecognitionGesture.class.getTypeName())) {
-            return NAME_OF_RECOGNITION_GESTURE_TABLE;
+            return SharedConstants.DB_TABLE_RECOGNITION_GESTURE;
         }
         if (clazz.getTypeName().equals(RobotAction.class.getTypeName())) {
-            return NAME_OF_ROBOT_ACTION_TABLE;
+            return SharedConstants.DB_TABLE_ROBOT_ACTION;
         }
 
         throw new AssertionError("class not supported by db: " + clazz);
