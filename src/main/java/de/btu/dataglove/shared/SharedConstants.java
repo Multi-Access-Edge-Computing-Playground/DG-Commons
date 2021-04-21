@@ -10,6 +10,8 @@ public class SharedConstants {
 
     //total number of sensors on the pair of gloves
     public static final int NUMBER_OF_SENSORS = 14;
+    public static final int NUMBER_OF_EULER_ANGLES_PER_FRAME = 42;
+    public static final int NUMBER_OF_EULER_ACCELERATIONS_PER_FRAME = 42;
     public static final int NUMBER_OF_EULER_ANGLE_DIFFERENCES_PER_HAND = 6;
     //each sensor has 11 fields that are used for calculation (rawRotScalar, rawRotVectorX, rawRotVectorY and so on)
     public static final int TOTAL_FIELDS_PER_SENSOR = 11;
