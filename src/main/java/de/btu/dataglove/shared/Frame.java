@@ -91,6 +91,14 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
         return SharedUtility.list2Array(resultList);
     }
 
+    public double[] getAllAccelerations() {
+        List<Double> resultList = new LinkedList<>();
+        resultList.addAll(SharedUtility.array2List(this.accX));
+        resultList.addAll(SharedUtility.array2List(this.accY));
+        resultList.addAll(SharedUtility.array2List(this.accZ));
+        return SharedUtility.list2Array(resultList);
+    }
+
     @Override
     public int compareTo(Frame f) {
         return Integer.compare(frameNumber, f.frameNumber);
