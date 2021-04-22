@@ -8,7 +8,8 @@ represents algorithms used to calculate gestures
  */
 public enum Algorithms {
     STATIC_GESTURE_LINEAR(0, 1),
-    STATIC_GESTURE_CIRCULAR(1, 1);
+    STATIC_GESTURE_CIRCULAR(1, 1),
+    STATIC_GESTURE_NAIVE_BAYES(2, 1);
 
     private final int value; //the value representing the algorithm in the database
     private final int numberOfParameters;
