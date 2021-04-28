@@ -12,6 +12,8 @@ public class MetaDataForCalculation {
     public final Algorithms usedAlgorithm;
     public final double[] parametersForAlgorithm;
 
+    private static transient final Gson gson = new Gson();
+
     public MetaDataForCalculation(List<String> namesOfTasks, String nameOfCalculationResult, Algorithms usedAlgorithm, double[] parametersForAlgorithm) {
         this.namesOfRecordings = namesOfTasks;
         this.nameOfCalculationResult = nameOfCalculationResult;
@@ -20,12 +22,10 @@ public class MetaDataForCalculation {
     }
 
     public String toJson() {
-        Gson gson = new Gson();
         return gson.toJson(this);
     }
 
     public static MetaDataForCalculation fromJson(String jsonString) {
-        Gson gson = new Gson();
         return gson.fromJson(jsonString, MetaDataForCalculation.class);
     }
 }
