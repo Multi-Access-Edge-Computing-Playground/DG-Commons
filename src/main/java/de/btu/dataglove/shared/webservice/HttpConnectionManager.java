@@ -393,6 +393,15 @@ public class HttpConnectionManager {
         return getObjectsFromDatabase(EulerGesture.class, map);
     }
 
+    /**
+     * convenience method that retrieves a list of gesturesNaiveBayes from the database based on their name
+     */
+    public static List<GestureNaiveBayes> getNaiveBayesGesturesFromDatabase(String name) throws IOException {
+        Map<String, String> map = new HashMap<>();
+        map.put("name", name);
+        return getObjectsFromDatabase(GestureNaiveBayes.class, map);
+    }
+
     public static boolean clearRecognitionGestureTable() throws IOException {
         return sendDeleteRequestToDatabase(RecognitionGesture.class, null);
     }
