@@ -458,6 +458,9 @@ public class HttpConnectionManager {
         if (clazz.getTypeName().equals(RobotAction.class.getTypeName())) {
             return SharedConstants.DB_TABLE_ROBOT_ACTION;
         }
+        if (clazz.getTypeName().equals(GestureNaiveBayes.class.getTypeName())) {
+            return SharedConstants.DB_TABLE_GESTURE_NAIVE_BAYES;
+        }
 
         throw new AssertionError("class not supported by db: " + clazz);
     }

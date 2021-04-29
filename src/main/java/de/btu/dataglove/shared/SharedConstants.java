@@ -27,6 +27,7 @@ public class SharedConstants {
     public static final String DB_TABLE_RECOGNITION_GESTURE = "/data-glove/rest/v1/RecognitionGesture";
     public static final String DB_TABLE_ROBOT_ACTION = "/data-glove/rest/v1/RobotAction";
     public static final String DB_TABLE_OBJECT_TRACKING = "/data-glove/rest/v1/ObjectTracking";
+    public static final String DB_TABLE_GESTURE_NAIVE_BAYES = "/data-glove/rest/v1/GestureNaiveBayes";
 
 
     //exceptions
