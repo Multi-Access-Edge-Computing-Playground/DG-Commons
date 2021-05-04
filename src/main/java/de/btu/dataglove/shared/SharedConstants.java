@@ -11,11 +11,13 @@ public class SharedConstants {
     //total number of sensors on the pair of gloves
     public static final int NUMBER_OF_SENSORS = 14;
     public static final int NUMBER_OF_EULER_ANGLES_PER_FRAME = 42;
-    public static final int NUMBER_OF_EULER_ACCELERATIONS_PER_FRAME = 42;
+    public static final int NUMBER_OF_ACCELERATIONS_PER_FRAME = 42;
     public static final int NUMBER_OF_EULER_ANGLE_DIFFERENCES_PER_HAND = 6;
     //each sensor has 11 fields that are used for calculation (rawRotScalar, rawRotVectorX, rawRotVectorY and so on)
     public static final int TOTAL_FIELDS_PER_SENSOR = 11;
     public static final int TOTAL_SENSOR_DATA_OF_FRAME = NUMBER_OF_SENSORS * TOTAL_FIELDS_PER_SENSOR;
+    public static final int TOTAL_FIELDS_PER_SENSOR_WITHOUT_RAW = 7;
+    public static final int TOTAL_SENSOR_DATA_OF_FRAME_WITHOUT_RAW = NUMBER_OF_SENSORS * TOTAL_FIELDS_PER_SENSOR_WITHOUT_RAW;
 
     //web service paths
     public static final String WEB_SERVICE_TASK_CALCULATOR = "/data-glove/rest/v1/task-calculator";

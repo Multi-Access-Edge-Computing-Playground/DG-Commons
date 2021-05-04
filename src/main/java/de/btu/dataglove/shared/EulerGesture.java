@@ -59,6 +59,25 @@ public class EulerGesture extends AbstractGesture implements Comparable<EulerGes
         this.upperBoundAccZ = upperBoundAccZ;
     }
 
+    @Override
+    public double getCorrectnessOfFrame(Frame frame) {
+        TypeOfGesture typeOfGesture = TypeOfGesture.get(this.typeOfGesture);
+        int numberOfValuesToBeChecked;
+        if ((typeOfGesture == TypeOfGesture.STATIC_GESTURE_LEFT) || (typeOfGesture == TypeOfGesture.STATIC_GESTURE_RIGHT)) {
+            numberOfValuesToBeChecked = (SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME + SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME) / 2;
+        } else if (typeOfGesture == TypeOfGesture.STATIC_GESTURE_BOTH)
+            numberOfValuesToBeChecked = (SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME + SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME);
+        else throw new AssertionError();
+
+        double trueCounter = Gesture.areArrayValuesWithinBoundaries(lowerBoundAccX, upperBoundAccX, frame.accX, typeOfGesture)
+                + Gesture.areArrayValuesWithinBoundaries(lowerBoundAccY, upperBoundAccY, frame.accY, typeOfGesture)
+                + Gesture.areArrayValuesWithinBoundaries(lowerBoundAccZ, upperBoundAccZ, frame.accZ, typeOfGesture)
+                + Gesture.areArrayValuesWithinBoundaries(lowerBoundPhi, upperBoundPhi, frame.getEulerRepresentation().getPhiAsRadian(), typeOfGesture)
+                + Gesture.areArrayValuesWithinBoundaries(lowerBoundTheta, upperBoundTheta, frame.getEulerRepresentation().getThetaAsRadian(), typeOfGesture)
+                + Gesture.areArrayValuesWithinBoundaries(lowerBoundPsi, upperBoundPsi, frame.getEulerRepresentation().getPsiAsRadian(), typeOfGesture);
+        return trueCounter / numberOfValuesToBeChecked;
+    }
+
     /*
     returns the boundary values for a given field based on the field id
     field ids are based on the getAllAngles method in the EulerFrame class

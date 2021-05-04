@@ -15,7 +15,7 @@ public class GestureCalculationNaiveBayes {
 
     private static final double p = 2; //see one pager item 9 of "2020_10_14_OnePager_vonMisesVerteilung.docx"
     private static final int numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME;
-    private static final int numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_EULER_ACCELERATIONS_PER_FRAME;
+    private static final int numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME;
     private static final int numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
     private static final double percentageOfDataToInclude = 95; //see item 23 "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
 

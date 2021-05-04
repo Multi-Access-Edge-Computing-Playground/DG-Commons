@@ -88,6 +88,41 @@ public class Gesture extends AbstractGesture implements Comparable<Gesture> {
     }
 
     @Override
+    public double getCorrectnessOfFrame(Frame frame) {
+        TypeOfGesture typeOfGesture = TypeOfGesture.get(this.typeOfGesture);
+        int numberOfValuesToBeChecked;
+        if ((typeOfGesture == TypeOfGesture.STATIC_GESTURE_LEFT) || (typeOfGesture == TypeOfGesture.STATIC_GESTURE_RIGHT)) {
+            numberOfValuesToBeChecked = SharedConstants.TOTAL_SENSOR_DATA_OF_FRAME_WITHOUT_RAW / 2;
+        } else if (typeOfGesture == TypeOfGesture.STATIC_GESTURE_BOTH)
+            numberOfValuesToBeChecked = SharedConstants.TOTAL_SENSOR_DATA_OF_FRAME_WITHOUT_RAW;
+        else throw new AssertionError();
+
+        double trueCounter = areArrayValuesWithinBoundaries(lowerBoundAccX, upperBoundAccX, frame.accX, typeOfGesture)
+                + areArrayValuesWithinBoundaries(lowerBoundAccY, upperBoundAccY, frame.accY, typeOfGesture)
+                + areArrayValuesWithinBoundaries(lowerBoundAccZ, upperBoundAccZ, frame.accZ, typeOfGesture)
+                + areArrayValuesWithinBoundaries(lowerBoundRotScalar, upperBoundRotScalar, frame.rotScalar, typeOfGesture)
+                + areArrayValuesWithinBoundaries(lowerBoundRotVectorX, upperBoundRotVectorX, frame.rotVectorX, typeOfGesture)
+                + areArrayValuesWithinBoundaries(lowerBoundRotVectorY, upperBoundRotVectorY, frame.rotVectorY, typeOfGesture)
+                + areArrayValuesWithinBoundaries(lowerBoundRotVectorZ, upperBoundRotVectorZ, frame.rotVectorZ, typeOfGesture);
+        return trueCounter / numberOfValuesToBeChecked;
+    }
+
+    /*
+    returns the number of values that are within boundaries
+     */
+    protected static int areArrayValuesWithinBoundaries(double[] lowerBoundValues, double[] upperBoundValues, double[] frameValues, TypeOfGesture typeOfGesture) {
+        int trueCounter = 0;
+        for (int i = 0; i < frameValues.length; i++) {
+            if (typeOfGesture.isSensorNumberRelevant(SharedUtility.getSensorNumberFromArrayIndex(i))) {
+                if (frameValues[i] > lowerBoundValues[i] && frameValues[i] < upperBoundValues[i]) {
+                    trueCounter++;
+                }
+            }
+        }
+        return trueCounter;
+    }
+
+    @Override
     public int compareTo(Gesture o) {
         return name.compareTo(o.name);
     }

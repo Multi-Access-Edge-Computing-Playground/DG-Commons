@@ -20,11 +20,12 @@ public class GestureNaiveBayes extends AbstractGesture {
         this.accelerationVarianceArray = accelerationVarianceArray;
     }
 
-    public boolean isFrameRecognized(Frame frame) {
+    @Override
+    public double getCorrectnessOfFrame(Frame frame) {
         double sumOfLnNaiveBayes = GestureCalculationNaiveBayes.calculateSumOfLnGaussianNaiveBayes(frame, kappaArray, circularMeanArray,
                 accelerationMeanArray, accelerationVarianceArray);
         System.out.println("isFrameRecognized sumOfLnNB: " + sumOfLnNaiveBayes);
-        return sumOfLnNaiveBayes >= threshold;
+        if (sumOfLnNaiveBayes >= threshold) return 1; else return 0;
     }
 
     public double getThreshold() {

@@ -15,4 +15,11 @@ public abstract class AbstractGesture implements Serializable {
         this.algorithmUsedForCalculation = algorithmUsedForCalculation;
         this.algorithmParameters = algorithmParameters;
     }
+
+    /**
+     *
+     * @param frame the frame being checked for correctness
+     * @return a value between 0 and 1 indicating how clearly the gesture has been recognized
+     */
+    public abstract double getCorrectnessOfFrame(Frame frame);
 }
