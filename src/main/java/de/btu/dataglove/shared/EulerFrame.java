@@ -108,6 +108,38 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
         return SharedUtility.list2Array(resultList);
     }
 
+    public double[] getAllRelevantAngles(TypeOfGesture typeOfGesture) {
+        if (typeOfGesture == null) return getAllAngles();
+        switch (typeOfGesture) {
+            case STATIC_GESTURE_LEFT:
+            case DYNAMIC_GESTURE_LEFT:
+                return getAllAnglesLeftHand();
+            case STATIC_GESTURE_RIGHT:
+            case DYNAMIC_GESTURE_RIGHT:
+                return getAllAnglesRightHand();
+            case STATIC_GESTURE_BOTH:
+            case DYNAMIC_GESTURE_BOTH:
+                return getAllAngles();
+        }
+        throw new AssertionError("this should never be reachable");
+    }
+
+    private double[] getAllAnglesLeftHand() {
+        List<Double> resultList = new LinkedList<>();
+        SharedUtility.addToListLeftHand(resultList, phi);
+        SharedUtility.addToListLeftHand(resultList, theta);
+        SharedUtility.addToListLeftHand(resultList, psi);
+        return SharedUtility.list2Array(resultList);
+    }
+
+    private double[] getAllAnglesRightHand() {
+        List<Double> resultList = new LinkedList<>();
+        SharedUtility.addToListRightHand(resultList, phi);
+        SharedUtility.addToListRightHand(resultList, theta);
+        SharedUtility.addToListRightHand(resultList, psi);
+        return SharedUtility.list2Array(resultList);
+    }
+
     @Override
     public int compareTo(EulerFrame f) {
         return Integer.compare(frameNumber, f.frameNumber);

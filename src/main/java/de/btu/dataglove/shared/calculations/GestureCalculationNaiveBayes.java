@@ -14,19 +14,35 @@ import java.util.function.DoubleFunction;
 public class GestureCalculationNaiveBayes {
 
     private static final double p = 2; //see one pager item 9 of "2020_10_14_OnePager_vonMisesVerteilung.docx"
-    private static final int numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME;
-    private static final int numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME;
-    private static final int numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
+    private static int numberOfAnglesPerFrame;
+    private static int numberOfAccelerationsPerFrame;
+    private static int numberOfTotalValuesPerFrame;
     private static final double percentageOfDataToInclude = 95; //see item 23 "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
+
+    private static void initConstants(TypeOfGesture typeOfGesture) {
+        switch (typeOfGesture) {
+            case STATIC_GESTURE_LEFT, STATIC_GESTURE_RIGHT, DYNAMIC_GESTURE_LEFT, DYNAMIC_GESTURE_RIGHT -> {
+                numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME / 2;
+                numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME / 2;
+                numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
+            }
+            default -> {
+                numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME;
+                numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME;
+                numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
+            }
+        }
+    }
 
     public static GestureNaiveBayes calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
 
-        int typeOfGesture = frames.get(0).typeOfRecording;
+        TypeOfGesture typeOfGesture = TypeOfGesture.get(frames.get(0).typeOfRecording);
+        initConstants(typeOfGesture);
         int algorithmUsedForCalculation = Algorithms.STATIC_GESTURE_NAIVE_BAYES.toInt();
 
         List<double[]> combinedAngles = new LinkedList<>();
         for (Frame frame : frames) {
-            combinedAngles.add(frame.getEulerRepresentation().getAllAngles());
+            combinedAngles.add(frame.getEulerRepresentation().getAllRelevantAngles((typeOfGesture)));
         }
 
         double[] accelerationMeanArray = new double[numberOfAccelerationsPerFrame];
@@ -34,7 +50,7 @@ public class GestureCalculationNaiveBayes {
         for (int i = 0; i < accelerationMeanArray.length; i++) {
             List<Double> accelerationsAtIOfAllFrames = new LinkedList<>();
             for (Frame frame : frames) {
-                accelerationsAtIOfAllFrames.add(frame.getAllAccelerations()[i]);
+                accelerationsAtIOfAllFrames.add(frame.getAllRelevantAccelerations(typeOfGesture)[i]);
             }
             accelerationMeanArray[i] = CalculationsUtil.calculateAverage(accelerationsAtIOfAllFrames);
             accelerationVarianceArray[i] = CalculationsUtil.calculateVariance(accelerationsAtIOfAllFrames, accelerationMeanArray[i]);
@@ -71,7 +87,7 @@ public class GestureCalculationNaiveBayes {
             sumOfLnGaussianNaiveBayesList.add(sumOfLnGaussianNaiveBayes);
         }
         double threshold = calculateThreshold(sumOfLnGaussianNaiveBayesList);
-        return new GestureNaiveBayes(nameOfResult, typeOfGesture, algorithmUsedForCalculation, parametersForCalculation,
+        return new GestureNaiveBayes(nameOfResult, typeOfGesture.toInt(), algorithmUsedForCalculation, parametersForCalculation,
                 threshold, kappaArray, circularMeanArray, accelerationMeanArray, accelerationVarianceArray);
     }
 

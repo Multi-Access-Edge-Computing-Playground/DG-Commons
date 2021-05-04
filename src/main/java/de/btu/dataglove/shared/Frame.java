@@ -91,11 +91,43 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
         return SharedUtility.list2Array(resultList);
     }
 
+    public double[] getAllRelevantAccelerations(TypeOfGesture typeOfGesture) {
+        if (typeOfGesture == null) return getAllAccelerations();
+        switch (typeOfGesture) {
+            case STATIC_GESTURE_LEFT:
+            case DYNAMIC_GESTURE_LEFT:
+                return getAllAccelerationsLeftHand();
+            case STATIC_GESTURE_RIGHT:
+            case DYNAMIC_GESTURE_RIGHT:
+                return getAllAccelerationsRightHand();
+            case STATIC_GESTURE_BOTH:
+            case DYNAMIC_GESTURE_BOTH:
+                return getAllAccelerations();
+        }
+        throw new AssertionError("this should never be reachable");
+    }
+
     public double[] getAllAccelerations() {
         List<Double> resultList = new LinkedList<>();
         resultList.addAll(SharedUtility.array2List(this.accX));
         resultList.addAll(SharedUtility.array2List(this.accY));
         resultList.addAll(SharedUtility.array2List(this.accZ));
+        return SharedUtility.list2Array(resultList);
+    }
+
+    private double[] getAllAccelerationsLeftHand() {
+        List<Double> resultList = new LinkedList<>();
+        SharedUtility.addToListLeftHand(resultList, accX);
+        SharedUtility.addToListLeftHand(resultList, accY);
+        SharedUtility.addToListLeftHand(resultList, accZ);
+        return SharedUtility.list2Array(resultList);
+    }
+
+    private double[] getAllAccelerationsRightHand() {
+        List<Double> resultList = new LinkedList<>();
+        SharedUtility.addToListRightHand(resultList, accX);
+        SharedUtility.addToListRightHand(resultList, accY);
+        SharedUtility.addToListRightHand(resultList, accZ);
         return SharedUtility.list2Array(resultList);
     }
 
