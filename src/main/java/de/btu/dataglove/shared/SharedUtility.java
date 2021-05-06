@@ -110,7 +110,8 @@ public class SharedUtility {
     }
 
     protected static void addToListRightHand(List<Double> list, double[] inputArray) {
-        for (int i = SharedUtility.getArrayPositionOfSensor(SharedConstants.GLOVE_TWO_LOWEST_SENSOR_ID); i < SharedConstants.NUMBER_OF_SENSORS/2; i++) {
+        for (int i = SharedUtility.getArrayPositionOfSensor(SharedConstants.GLOVE_TWO_LOWEST_SENSOR_ID);
+             i <= SharedUtility.getArrayPositionOfSensor(SharedConstants.GLOVE_TWO_HIGHEST_SENSOR_ID); i++) {
             list.add(inputArray[i]);
         }
     }
