@@ -23,7 +23,7 @@ public class GestureNaiveBayes extends AbstractGesture {
     @Override
     public double getCorrectnessOfFrame(Frame frame) {
         double sumOfLnNaiveBayes = GestureCalculationNaiveBayes.calculateSumOfLnGaussianNaiveBayes(frame, kappaArray, circularMeanArray,
-                accelerationMeanArray, accelerationVarianceArray);
+                accelerationMeanArray, accelerationVarianceArray, TypeOfGesture.get(this.typeOfGesture));
         System.out.println("isFrameRecognized sumOfLnNB: " + sumOfLnNaiveBayes);
         if (sumOfLnNaiveBayes >= threshold) return 1; else return 0;
     }
