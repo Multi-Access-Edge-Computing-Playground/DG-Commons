@@ -14,7 +14,7 @@ public class GestureCalculationCircular {
     //see one pager item 9
     private static final double p = 2;
 
-    public static EulerGesture calculateGestureBoundaries(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
+    public static EulerGesture calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
 
         int typeOfGesture = frames.get(0).typeOfRecording;
         int algorithmUsedForCalculation = Algorithms.STATIC_GESTURE_CIRCULAR.toInt();
@@ -64,7 +64,7 @@ public class GestureCalculationCircular {
         }
 
         //we use this to calculate the acceleration boundaries /TODO have separate implementation instead if needed
-        Gesture linearGesture = GestureCalculationLinear.calculateGestureBoundaries(nameOfResult, frames, parametersForCalculation);
+        Gesture linearGesture = GestureCalculationLinear.calculateGestureModel(nameOfResult, frames, parametersForCalculation);
         double[] lowerBoundAccX = linearGesture.lowerBoundAccX;
         double[] lowerBoundAccY = linearGesture.lowerBoundAccY;
         double[] lowerBoundAccZ = linearGesture.lowerBoundAccZ;

@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class GestureCalculationLinear {
-    public static Gesture calculateGestureBoundaries(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
+    public static Gesture calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
         long startTime = System.currentTimeMillis();
 
         ExecutorService executor = Executors.newFixedThreadPool(2);

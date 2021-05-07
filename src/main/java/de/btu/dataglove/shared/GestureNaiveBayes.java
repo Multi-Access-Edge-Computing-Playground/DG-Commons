@@ -2,8 +2,6 @@ package de.btu.dataglove.shared;
 
 import de.btu.dataglove.shared.calculations.GestureCalculationNaiveBayes;
 
-import java.util.List;
-
 public class GestureNaiveBayes extends AbstractGesture {
 
     private final double threshold;
@@ -20,11 +18,6 @@ public class GestureNaiveBayes extends AbstractGesture {
         this.circularMeanArray = circularMeanArray;
         this.accelerationMeanArray = accelerationMeanArray;
         this.accelerationVarianceArray = accelerationVarianceArray;
-    }
-
-    @Override
-    public GestureNaiveBayes calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
-        return GestureCalculationNaiveBayes.calculateGestureModel(nameOfResult, frames, parametersForCalculation);
     }
 
     @Override

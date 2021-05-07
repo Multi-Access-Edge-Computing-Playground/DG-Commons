@@ -23,13 +23,4 @@ public abstract class AbstractGesture implements Serializable {
      * @return a value between 0 and 1 indicating how clearly the gesture has been recognized
      */
     public abstract double getCorrectnessOfFrame(Frame frame);
-
-    /**
-     * calculates a gesture model based on a list of frames and some parameters if applicable
-     * @param nameOfResult the name of the resulting gesture model
-     * @param frames the frames used to calculate the model
-     * @param parametersForCalculation parameters for tweaking the model calculation
-     * @return a calculated gesture model
-     */
-    public abstract AbstractGesture calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation);
 }

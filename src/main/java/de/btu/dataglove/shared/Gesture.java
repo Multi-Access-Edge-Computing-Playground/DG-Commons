@@ -91,11 +91,6 @@ public class Gesture extends AbstractGesture implements Comparable<Gesture> {
     }
 
     @Override
-    public Gesture calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
-        return GestureCalculationLinear.calculateGestureBoundaries(nameOfResult, frames, parametersForCalculation);
-    }
-
-    @Override
     public double getCorrectnessOfFrame(Frame frame) {
         TypeOfGesture typeOfGesture = TypeOfGesture.get(this.typeOfGesture);
         int numberOfValuesToBeChecked;
