@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.function.DoubleFunction;
 
 /**
- based on "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
- and "2020_10_14_OnePager_vonMisesVerteilung.docx"
+ * based on "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
+ * and "2020_10_14_OnePager_vonMisesVerteilung.docx"
  */
 public class GestureCalculationNaiveBayes {
 
@@ -21,16 +21,15 @@ public class GestureCalculationNaiveBayes {
 
     private static void initConstants(TypeOfGesture typeOfGesture) {
         switch (typeOfGesture) {
-            case STATIC_GESTURE_LEFT, STATIC_GESTURE_RIGHT, DYNAMIC_GESTURE_LEFT, DYNAMIC_GESTURE_RIGHT -> {
+            case STATIC_GESTURE_LEFT, STATIC_GESTURE_RIGHT, DYNAMIC_GESTURE_LEFT, DYNAMIC_GESTURE_RIGHT:
                 numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME / 2;
                 numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME / 2;
                 numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
-            }
-            default -> {
+                break;
+            default:
                 numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME;
                 numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME;
                 numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
-            }
         }
     }
 
@@ -119,13 +118,13 @@ public class GestureCalculationNaiveBayes {
         lowerIntervalBounds[0] = minOfSumOfLnGaussianNaiveBayes;
         upperIntervalBounds[0] = minOfSumOfLnGaussianNaiveBayes + intervalWidth;
         for (int i = 1; i < numberOfIntervals; i++) {
-            lowerIntervalBounds[i] = upperIntervalBounds[i-1];
-            upperIntervalBounds[i] = upperIntervalBounds[i-1] + intervalWidth;
+            lowerIntervalBounds[i] = upperIntervalBounds[i - 1];
+            upperIntervalBounds[i] = upperIntervalBounds[i - 1] + intervalWidth;
         }
 
         //item 21
         double[] frequencyArray = new double[numberOfIntervals];
-        for (int i = 0; i <numberOfIntervals; i++) {
+        for (int i = 0; i < numberOfIntervals; i++) {
             frequencyArray[i] = calculateFrequency(lowerIntervalBounds[i], upperIntervalBounds[i], sumOfLnGaussianNaiveBayesList);
         }
         return filterMeasurementSeries(frequencyArray, upperIntervalBounds, sumOfLnGaussianNaiveBayesList.size());
@@ -160,7 +159,7 @@ public class GestureCalculationNaiveBayes {
             if (kappaArray[i] > 709) {
                 double[] varianceFromKappaArray = new double[kappaArray.length];
                 for (int j = 0; j < varianceFromKappaArray.length; j++) {
-                    varianceFromKappaArray[j] = 1/kappaArray[j];
+                    varianceFromKappaArray[j] = 1 / kappaArray[j];
                 }
                 likelihoodAnglesArray[i] = calculateLikelihoodWithGaussianDistribution(frame.getEulerRepresentation().getAllRelevantAngles(typeOfGesture)[i],
                         circularMeanArray[i], varianceFromKappaArray[i]);
@@ -191,8 +190,8 @@ public class GestureCalculationNaiveBayes {
     }
 
     private static double calculateLikelihoodWithGaussianDistribution(double x, double mean, double variance) {
-        double leftPart = 1/Math.sqrt(2 * Math.PI * variance);
-        double rightUpperPart = ( (Math.pow((x - mean), 2)) / (2 * variance));
+        double leftPart = 1 / Math.sqrt(2 * Math.PI * variance);
+        double rightUpperPart = ((Math.pow((x - mean), 2)) / (2 * variance));
         double rightPart = Math.exp(-(rightUpperPart));
         return leftPart * rightPart;
     }
