@@ -1,5 +1,9 @@
 package de.btu.dataglove.shared;
 
+import de.btu.dataglove.shared.calculations.GestureCalculationCircular;
+
+import java.util.List;
+
 /*
 represents a static gesture with euler angles instead of quaternions
  */
@@ -57,6 +61,11 @@ public class EulerGesture extends AbstractGesture implements Comparable<EulerGes
         this.upperBoundAccX = upperBoundAccX;
         this.upperBoundAccY = upperBoundAccY;
         this.upperBoundAccZ = upperBoundAccZ;
+    }
+
+    @Override
+    public EulerGesture calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
+        return GestureCalculationCircular.calculateGestureBoundaries(nameOfResult, frames, parametersForCalculation);
     }
 
     @Override

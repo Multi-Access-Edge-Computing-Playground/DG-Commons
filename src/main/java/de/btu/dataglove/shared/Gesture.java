@@ -1,6 +1,9 @@
 package de.btu.dataglove.shared;
 
+import de.btu.dataglove.shared.calculations.GestureCalculationLinear;
+
 import java.io.Serializable;
+import java.util.List;
 
 /*
 represents a static gesture
@@ -85,6 +88,11 @@ public class Gesture extends AbstractGesture implements Comparable<Gesture> {
             result[i] = allBoundaries[startPos + i];
         }
         return result;
+    }
+
+    @Override
+    public Gesture calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
+        return GestureCalculationLinear.calculateGestureBoundaries(nameOfResult, frames, parametersForCalculation);
     }
 
     @Override
