@@ -21,12 +21,16 @@ public class GestureCalculationNaiveBayes {
 
     private static void initConstants(TypeOfGesture typeOfGesture) {
         switch (typeOfGesture) {
-            case STATIC_GESTURE_LEFT, STATIC_GESTURE_RIGHT, DYNAMIC_GESTURE_LEFT, DYNAMIC_GESTURE_RIGHT:
+            case STATIC_GESTURE_LEFT:
+            case STATIC_GESTURE_RIGHT:
+            case DYNAMIC_GESTURE_LEFT:
+            case DYNAMIC_GESTURE_RIGHT:
                 numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME / 2;
                 numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME / 2;
                 numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
                 break;
-            default:
+            case STATIC_GESTURE_BOTH:
+            case DYNAMIC_GESTURE_BOTH:
                 numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME;
                 numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME;
                 numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
