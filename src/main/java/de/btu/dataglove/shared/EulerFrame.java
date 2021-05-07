@@ -16,6 +16,11 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
     private final double[] accY;
     private final double[] accZ;
 
+    //for caching
+    private transient double[] allAnglesBoth;
+    private transient double[] allAnglesLeft;
+    private transient double[] allAnglesRight;
+
     public EulerFrame(Frame frame) {
 
         super(frame.nameOfTask, frame.userName, frame.timeStamp,
@@ -42,6 +47,7 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
             psi[i] = Math.atan2(x, y);
         }
     }
+
     public double[] getPhiAsRadian() {
         return phi;
     }
@@ -90,24 +96,6 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
         return accZ;
     }
 
-    /*
-    returns all angles in a single array
-    order: 0  sensor24phi
-           1  sensor25phi
-           ...
-           13 sensor46phi
-           14 sensor24theta
-           ...
-     */
-    public double[] getAllAngles() {
-        List<Double> resultList = new LinkedList<>();
-        resultList.addAll(SharedUtility.array2List(phi));
-        resultList.addAll(SharedUtility.array2List(theta));
-        resultList.addAll(SharedUtility.array2List(psi));
-
-        return SharedUtility.list2Array(resultList);
-    }
-
     public double[] getAllRelevantAngles(TypeOfGesture typeOfGesture) {
         if (typeOfGesture == null) return getAllAngles();
         switch (typeOfGesture) {
@@ -124,20 +112,46 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
         throw new AssertionError("this should never be reachable");
     }
 
+   /*
+   returns all angles in a single array
+   order: 0  sensor24phi
+   1  sensor25phi
+   ...
+   13 sensor46phi
+   14 sensor24theta
+   ...
+   */
+    public double[] getAllAngles() {
+        if (allAnglesBoth == null) {
+            List<Double> resultList = new LinkedList<>();
+            resultList.addAll(SharedUtility.array2List(phi));
+            resultList.addAll(SharedUtility.array2List(theta));
+            resultList.addAll(SharedUtility.array2List(psi));
+            allAnglesBoth = SharedUtility.list2Array(resultList);
+        }
+        return allAnglesBoth;
+    }
+
     private double[] getAllAnglesLeftHand() {
-        List<Double> resultList = new LinkedList<>();
-        SharedUtility.addToListLeftHand(resultList, phi);
-        SharedUtility.addToListLeftHand(resultList, theta);
-        SharedUtility.addToListLeftHand(resultList, psi);
-        return SharedUtility.list2Array(resultList);
+        if (allAnglesLeft == null) {
+            List<Double> resultList = new LinkedList<>();
+            SharedUtility.addToListLeftHand(resultList, phi);
+            SharedUtility.addToListLeftHand(resultList, theta);
+            SharedUtility.addToListLeftHand(resultList, psi);
+            allAnglesLeft = SharedUtility.list2Array(resultList);
+        }
+        return allAnglesLeft;
     }
 
     private double[] getAllAnglesRightHand() {
-        List<Double> resultList = new LinkedList<>();
-        SharedUtility.addToListRightHand(resultList, phi);
-        SharedUtility.addToListRightHand(resultList, theta);
-        SharedUtility.addToListRightHand(resultList, psi);
-        return SharedUtility.list2Array(resultList);
+        if (allAnglesRight == null) {
+            List<Double> resultList = new LinkedList<>();
+            SharedUtility.addToListRightHand(resultList, phi);
+            SharedUtility.addToListRightHand(resultList, theta);
+            SharedUtility.addToListRightHand(resultList, psi);
+            allAnglesRight = SharedUtility.list2Array(resultList);
+        }
+        return allAnglesRight;
     }
 
     @Override

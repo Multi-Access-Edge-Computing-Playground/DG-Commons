@@ -22,9 +22,14 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
     public final double[] accY;
     public final double[] accZ;
 
+    //for caching
     private transient EulerFrame eulerRepresentation;
     private transient EulerDiffFrame eulerDiffRepresentation;
     private transient DBFrame dbRepresentation;
+
+    private transient double[] allAccelerationsLeft;
+    private transient double[] allAccelerationsRight;
+    private transient double[] allAccelerationsBoth;
 
     /*
     constructor for a frame. Arrays - sensor matching as follows:
@@ -108,27 +113,36 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
     }
 
     public double[] getAllAccelerations() {
-        List<Double> resultList = new LinkedList<>();
-        resultList.addAll(SharedUtility.array2List(this.accX));
-        resultList.addAll(SharedUtility.array2List(this.accY));
-        resultList.addAll(SharedUtility.array2List(this.accZ));
-        return SharedUtility.list2Array(resultList);
+        if (allAccelerationsBoth == null) {
+            List<Double> resultList = new LinkedList<>();
+            resultList.addAll(SharedUtility.array2List(this.accX));
+            resultList.addAll(SharedUtility.array2List(this.accY));
+            resultList.addAll(SharedUtility.array2List(this.accZ));
+            allAccelerationsBoth = SharedUtility.list2Array(resultList);
+        }
+        return allAccelerationsBoth;
     }
 
     private double[] getAllAccelerationsLeftHand() {
-        List<Double> resultList = new LinkedList<>();
-        SharedUtility.addToListLeftHand(resultList, accX);
-        SharedUtility.addToListLeftHand(resultList, accY);
-        SharedUtility.addToListLeftHand(resultList, accZ);
-        return SharedUtility.list2Array(resultList);
+        if (allAccelerationsLeft == null ){
+            List<Double> resultList = new LinkedList<>();
+            SharedUtility.addToListLeftHand(resultList, accX);
+            SharedUtility.addToListLeftHand(resultList, accY);
+            SharedUtility.addToListLeftHand(resultList, accZ);
+            allAccelerationsLeft =  SharedUtility.list2Array(resultList);
+        }
+        return allAccelerationsLeft;
     }
 
     private double[] getAllAccelerationsRightHand() {
-        List<Double> resultList = new LinkedList<>();
-        SharedUtility.addToListRightHand(resultList, accX);
-        SharedUtility.addToListRightHand(resultList, accY);
-        SharedUtility.addToListRightHand(resultList, accZ);
-        return SharedUtility.list2Array(resultList);
+        if (allAccelerationsRight == null) {
+            List<Double> resultList = new LinkedList<>();
+            SharedUtility.addToListRightHand(resultList, accX);
+            SharedUtility.addToListRightHand(resultList, accY);
+            SharedUtility.addToListRightHand(resultList, accZ);
+            allAccelerationsRight = SharedUtility.list2Array(resultList);
+        }
+        return allAccelerationsRight;
     }
 
     @Override
