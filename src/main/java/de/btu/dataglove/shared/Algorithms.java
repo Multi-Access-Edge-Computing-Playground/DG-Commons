@@ -24,7 +24,7 @@ public enum Algorithms {
             return GestureCalculationCircular.calculateGestureModel(nameOfResult, frames, parametersForCalculation);
         }
     },
-    STATIC_GESTURE_NAIVE_BAYES(2, 1) {
+    STATIC_GESTURE_NAIVE_BAYES(2, 0) {
         @Override
         public GestureNaiveBayes calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
             return GestureCalculationNaiveBayes.calculateGestureModel(nameOfResult, frames, parametersForCalculation);
