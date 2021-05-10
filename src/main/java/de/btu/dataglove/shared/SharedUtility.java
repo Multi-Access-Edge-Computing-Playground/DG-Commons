@@ -104,15 +104,26 @@ public class SharedUtility {
     }
 
     protected static void addToListLeftHand(List<Double> list, double[] inputArray) {
-        for (int i = 0; i < SharedConstants.NUMBER_OF_SENSORS/2; i++) {
+        for (int i = 0; i < inputArray.length/2; i++) {
             list.add(inputArray[i]);
         }
     }
 
     protected static void addToListRightHand(List<Double> list, double[] inputArray) {
-        for (int i = SharedUtility.getArrayPositionOfSensor(SharedConstants.GLOVE_TWO_LOWEST_SENSOR_ID);
-             i <= SharedUtility.getArrayPositionOfSensor(SharedConstants.GLOVE_TWO_HIGHEST_SENSOR_ID); i++) {
+        for (int i = inputArray.length/2; i < inputArray.length; i++) {
             list.add(inputArray[i]);
+        }
+    }
+
+    protected static void addToListLeftHand(List<Double> listToAddTo, List<Double> listToAddFrom) {
+        for (int i = 0; i < listToAddFrom.size()/2; i++) {
+            listToAddTo.add(listToAddFrom.get(i));
+        }
+    }
+
+    protected static void addToListRightHand(List<Double> listToAddTo, List<Double> listToAddFrom) {
+        for (int i = listToAddFrom.size()/2; i < listToAddFrom.size(); i++) {
+            listToAddTo.add(listToAddFrom.get(i));
         }
     }
 }

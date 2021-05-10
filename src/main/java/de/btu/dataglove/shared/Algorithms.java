@@ -29,6 +29,12 @@ public enum Algorithms {
         public GestureNaiveBayes calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
             return GestureCalculationNaiveBayes.calculateGestureModel(nameOfResult, frames, parametersForCalculation);
         }
+    },
+    STATIC_GESTURE_NAIVE_BAYES_EULER_DIFFS(3, 0) {
+        @Override
+        public GestureNaiveBayesEulerDiffs calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
+            return GestureCalculationNaiveBayes.calculateGestureModelWithEulerDiffs(nameOfResult, frames, parametersForCalculation);
+        }
     };
 
     private final int value; //the value representing the algorithm in the database

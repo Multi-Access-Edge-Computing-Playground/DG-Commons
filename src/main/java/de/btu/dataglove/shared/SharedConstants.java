@@ -12,7 +12,7 @@ public class SharedConstants {
     public static final int NUMBER_OF_SENSORS = 14;
     public static final int NUMBER_OF_EULER_ANGLES_PER_FRAME = 42;
     public static final int NUMBER_OF_ACCELERATIONS_PER_FRAME = 42;
-    public static final int NUMBER_OF_EULER_ANGLE_DIFFERENCES_PER_HAND = 6;
+    public static final int NUMBER_OF_EULER_ANGLE_DIFFERENCES_PER_HAND = 6 * 3; //6 sensors (no back of hand, 3 angles (psi, theta, phi)
     //each sensor has 11 fields that are used for calculation (rawRotScalar, rawRotVectorX, rawRotVectorY and so on)
     public static final int TOTAL_FIELDS_PER_SENSOR = 11;
     public static final int TOTAL_SENSOR_DATA_OF_FRAME = NUMBER_OF_SENSORS * TOTAL_FIELDS_PER_SENSOR;

@@ -19,33 +19,49 @@ public class GestureCalculationNaiveBayes {
     private static int numberOfTotalValuesPerFrame;
     private static final double percentageOfDataToInclude = 95; //see item 23 "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
 
-    private static void initConstants(TypeOfGesture typeOfGesture) {
+    private static void initConstants(TypeOfGesture typeOfGesture, boolean useEulerDiffs) {
+
+        if (useEulerDiffs) numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLE_DIFFERENCES_PER_HAND * 2;
+        else numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME;
+
         switch (typeOfGesture) {
             case STATIC_GESTURE_LEFT:
             case STATIC_GESTURE_RIGHT:
             case DYNAMIC_GESTURE_LEFT:
             case DYNAMIC_GESTURE_RIGHT:
-                numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME / 2;
+                numberOfAnglesPerFrame = numberOfAnglesPerFrame / 2;
                 numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME / 2;
                 numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
                 break;
             case STATIC_GESTURE_BOTH:
             case DYNAMIC_GESTURE_BOTH:
-                numberOfAnglesPerFrame = SharedConstants.NUMBER_OF_EULER_ANGLES_PER_FRAME;
                 numberOfAccelerationsPerFrame = SharedConstants.NUMBER_OF_ACCELERATIONS_PER_FRAME;
                 numberOfTotalValuesPerFrame = numberOfAnglesPerFrame + numberOfAccelerationsPerFrame;
         }
     }
 
     public static GestureNaiveBayes calculateGestureModel(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
+        return (GestureNaiveBayes) calculateGestureModelImpl(nameOfResult, frames, parametersForCalculation, false);
+    }
+
+    public static GestureNaiveBayesEulerDiffs calculateGestureModelWithEulerDiffs(String nameOfResult, List<Frame> frames, double[] parametersForCalculation) {
+        return (GestureNaiveBayesEulerDiffs) calculateGestureModelImpl(nameOfResult, frames, parametersForCalculation, true);
+    }
+
+    private static AbstractGesture calculateGestureModelImpl(String nameOfResult, List<Frame> frames, double[] parametersForCalculation, boolean useEulerDiffs) {
 
         TypeOfGesture typeOfGesture = TypeOfGesture.get(frames.get(0).typeOfRecording);
-        initConstants(typeOfGesture);
-        int algorithmUsedForCalculation = Algorithms.STATIC_GESTURE_NAIVE_BAYES.toInt();
+        initConstants(typeOfGesture, useEulerDiffs);
+
+        Algorithms algorithmUsedForCalculation;
+        if (useEulerDiffs) algorithmUsedForCalculation = Algorithms.STATIC_GESTURE_NAIVE_BAYES_EULER_DIFFS;
+        else algorithmUsedForCalculation = Algorithms.STATIC_GESTURE_NAIVE_BAYES;
 
         List<double[]> combinedAngles = new LinkedList<>();
         for (Frame frame : frames) {
-            combinedAngles.add(frame.getEulerRepresentation().getAllRelevantAngles((typeOfGesture)));
+            if (useEulerDiffs)
+                combinedAngles.add(frame.getEulerDiffRepresentation().getAllRelevantAngleDiffs((typeOfGesture)));
+            else combinedAngles.add(frame.getEulerRepresentation().getAllRelevantAngles((typeOfGesture)));
         }
 
         double[] accelerationMeanArray = new double[numberOfAccelerationsPerFrame];
@@ -86,18 +102,24 @@ public class GestureCalculationNaiveBayes {
 
         List<Double> sumOfLnGaussianNaiveBayesList = new LinkedList<>();
         for (Frame frame : frames) {
-            double sumOfLnGaussianNaiveBayes = calculateSumOfLnGaussianNaiveBayes(frame, kappaArray, circularMeanArray, accelerationMeanArray, accelerationVarianceArray, typeOfGesture);
+            double sumOfLnGaussianNaiveBayes = calculateSumOfLnGaussianNaiveBayes(frame, kappaArray, circularMeanArray,
+                    accelerationMeanArray, accelerationVarianceArray, typeOfGesture, useEulerDiffs);
             sumOfLnGaussianNaiveBayesList.add(sumOfLnGaussianNaiveBayes);
         }
         double threshold = calculateThreshold(sumOfLnGaussianNaiveBayesList);
-        return new GestureNaiveBayes(nameOfResult, typeOfGesture.toInt(), algorithmUsedForCalculation, parametersForCalculation,
-                threshold, kappaArray, circularMeanArray, accelerationMeanArray, accelerationVarianceArray);
+        if (useEulerDiffs)
+            return new GestureNaiveBayesEulerDiffs(nameOfResult, typeOfGesture.toInt(), algorithmUsedForCalculation.toInt(), parametersForCalculation,
+                    threshold, kappaArray, circularMeanArray, accelerationMeanArray, accelerationVarianceArray);
+        else
+            return new GestureNaiveBayes(nameOfResult, typeOfGesture.toInt(), algorithmUsedForCalculation.toInt(), parametersForCalculation,
+                    threshold, kappaArray, circularMeanArray, accelerationMeanArray, accelerationVarianceArray);
     }
 
     //item 15, 16 "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
     public static double calculateSumOfLnGaussianNaiveBayes(Frame frame, double[] kappaArray, double[] circularMeanArray, double[] accelerationMeanArray,
-                                                            double[] accelerationVarianceArray, TypeOfGesture typeOfGesture) {
-        double[] likelihoods = calculateLikelihoods(frame, kappaArray, circularMeanArray, accelerationMeanArray, accelerationVarianceArray, typeOfGesture);
+                                                            double[] accelerationVarianceArray, TypeOfGesture typeOfGesture, boolean useEulerDiffs) {
+        initConstants(typeOfGesture, useEulerDiffs);
+        double[] likelihoods = calculateLikelihoods(frame, kappaArray, circularMeanArray, accelerationMeanArray, accelerationVarianceArray, typeOfGesture, useEulerDiffs);
         double[] lnLikelihoods = new double[numberOfTotalValuesPerFrame];
         for (int i = 0; i < likelihoods.length; i++) {
             lnLikelihoods[i] = Math.log(likelihoods[i]);
@@ -157,7 +179,11 @@ public class GestureCalculationNaiveBayes {
     }
 
     private static double[] calculateLikelihoods(Frame frame, double[] kappaArray, double[] circularMeanArray, double[] accelerationMeanArray,
-                                                 double[] accelerationVarianceArray, TypeOfGesture typeOfGesture) {
+                                                 double[] accelerationVarianceArray, TypeOfGesture typeOfGesture, boolean useEulerDiffs) {
+        double[] allRelevantEulerAnglesOrAngleDiffs;
+        if (useEulerDiffs)
+            allRelevantEulerAnglesOrAngleDiffs = frame.getEulerDiffRepresentation().getAllRelevantAngleDiffs(typeOfGesture);
+        else allRelevantEulerAnglesOrAngleDiffs = frame.getEulerRepresentation().getAllRelevantAngles(typeOfGesture);
         double[] likelihoodAnglesArray = new double[numberOfTotalValuesPerFrame];
         for (int i = 0; i < numberOfAnglesPerFrame; i++) {
             if (kappaArray[i] > 709) {
@@ -165,10 +191,10 @@ public class GestureCalculationNaiveBayes {
                 for (int j = 0; j < varianceFromKappaArray.length; j++) {
                     varianceFromKappaArray[j] = 1 / kappaArray[j];
                 }
-                likelihoodAnglesArray[i] = calculateLikelihoodWithGaussianDistribution(frame.getEulerRepresentation().getAllRelevantAngles(typeOfGesture)[i],
+                likelihoodAnglesArray[i] = calculateLikelihoodWithGaussianDistribution(allRelevantEulerAnglesOrAngleDiffs[i],
                         circularMeanArray[i], varianceFromKappaArray[i]);
             } else {
-                likelihoodAnglesArray[i] = calculateLikelihoodWithVonMisesDistribution(frame.getEulerRepresentation().getAllRelevantAngles(typeOfGesture)[i],
+                likelihoodAnglesArray[i] = calculateLikelihoodWithVonMisesDistribution(allRelevantEulerAnglesOrAngleDiffs[i],
                         circularMeanArray[i], kappaArray[i]);
             }
         }
