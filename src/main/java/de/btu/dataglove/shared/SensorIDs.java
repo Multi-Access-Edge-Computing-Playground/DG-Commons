@@ -1,7 +1,7 @@
 package de.btu.dataglove.shared;
 
 /**
- * an eunumeration of all sensor numbers and their positions in arrays
+ * an enumeration of all sensor numbers and their positions in arrays
  */
 public enum SensorIDs {
 
