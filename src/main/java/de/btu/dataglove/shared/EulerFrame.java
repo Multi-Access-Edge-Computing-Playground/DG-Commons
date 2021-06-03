@@ -121,7 +121,7 @@ public class EulerFrame extends AbstractFrame implements Comparable<EulerFrame> 
    14 sensor24theta
    ...
    */
-    public double[] getAllAngles() {
+    private double[] getAllAngles() {
         if (allAnglesBoth == null) {
             List<Double> resultList = new LinkedList<>();
             resultList.addAll(SharedUtility.array2List(phi));

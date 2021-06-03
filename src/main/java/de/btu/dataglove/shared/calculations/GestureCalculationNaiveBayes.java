@@ -200,7 +200,7 @@ public class GestureCalculationNaiveBayes {
         }
 
         for (int i = numberOfAnglesPerFrame; i < numberOfTotalValuesPerFrame; i++) {
-            likelihoodAnglesArray[i] = calculateLikelihoodWithGaussianDistribution(frame.getAllAccelerations()[i - numberOfAnglesPerFrame],
+            likelihoodAnglesArray[i] = calculateLikelihoodWithGaussianDistribution(frame.getAllRelevantAccelerations(typeOfGesture)[i - numberOfAnglesPerFrame],
                     accelerationMeanArray[i - numberOfAnglesPerFrame], accelerationVarianceArray[i - numberOfAnglesPerFrame]);
         }
 

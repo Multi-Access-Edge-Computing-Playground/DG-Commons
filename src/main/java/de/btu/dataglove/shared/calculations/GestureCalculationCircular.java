@@ -28,7 +28,7 @@ public class GestureCalculationCircular {
 
         List<double[]> combinedAngles = new LinkedList<>();
         for (EulerFrame eulerFrame : eulerFrames) {
-            combinedAngles.add(eulerFrame.getAllAngles());
+            combinedAngles.add(eulerFrame.getAllRelevantAngles(TypeOfGesture.get(typeOfGesture)));
         }
         int numberOfAnglesPerFrame = combinedAngles.get(0).length;
 

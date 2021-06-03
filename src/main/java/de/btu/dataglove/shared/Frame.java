@@ -112,7 +112,7 @@ public class Frame extends AbstractFrame implements Comparable<Frame> {
         throw new AssertionError("this should never be reachable");
     }
 
-    public double[] getAllAccelerations() {
+    private double[] getAllAccelerations() {
         if (allAccelerationsBoth == null) {
             List<Double> resultList = new LinkedList<>();
             resultList.addAll(SharedUtility.array2List(this.accX));
