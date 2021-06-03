@@ -167,7 +167,7 @@ public class GestureCalculationNaiveBayes {
             }
             counter += relativeFrequency;
         }
-        throw new AssertionError("this should never be reached");
+        return upperIntervalBounds[upperIntervalBounds.length-1];
     }
 
     private static int calculateFrequency(double lowerIntervalBound, double upperIntervalBound, List<Double> sumOfLnGaussianNaiveBayesList) {
