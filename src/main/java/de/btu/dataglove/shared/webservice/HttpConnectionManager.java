@@ -470,6 +470,9 @@ public class HttpConnectionManager {
         if (clazz.getTypeName().equals(GestureNaiveBayes.class.getTypeName())) {
             return SharedConstants.DB_TABLE_GESTURE_NAIVE_BAYES;
         }
+        if (clazz.getTypeName().equals(GestureNaiveBayesEulerDiffs.class.getTypeName())) {
+            return SharedConstants.DB_TABLE_GESTURE_NAIVE_BAYES_EULER_DIFFS;
+        }
 
         throw new AssertionError("class not supported by db: " + clazz);
     }
