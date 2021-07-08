@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpConnectionManager {
 
-    private static final OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient client = new OkHttpClient.Builder().readTimeout(5, TimeUnit.MINUTES).build();
     private static String AUTHORIZATION_HEADER;
     private static String SERVER_URL;
     private static int LIMIT_FOR_HTTP_REQUEST_SIZE;
@@ -248,6 +248,7 @@ public class HttpConnectionManager {
                 .addHeader("Authorization", AUTHORIZATION_HEADER)
                 .build();
         Call call = client.newCall(request);
+
 
         Response response = call.execute();
         String responseBodyString = Objects.requireNonNull(response.body()).string();
