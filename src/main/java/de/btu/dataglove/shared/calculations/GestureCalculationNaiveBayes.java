@@ -134,8 +134,9 @@ public class GestureCalculationNaiveBayes {
 
     //item 17-23 "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
     private static double calculateThreshold(List<Double> sumOfLnGaussianNaiveBayesList) {
-        double minOfSumOfLnGaussianNaiveBayes = Collections.min(sumOfLnGaussianNaiveBayesList);
-        double maxOfSumOfLnGaussianNaiveBayes = Collections.max(sumOfLnGaussianNaiveBayesList);
+        Collections.sort(sumOfLnGaussianNaiveBayesList);
+        double minOfSumOfLnGaussianNaiveBayes = getMinimumOfSumOfLnGaussianNaiveBayes(sumOfLnGaussianNaiveBayesList);
+        double maxOfSumOfLnGaussianNaiveBayes = sumOfLnGaussianNaiveBayesList.get(sumOfLnGaussianNaiveBayesList.size() - 1);
         int numberOfIntervals = 100; //item 18 "2021-02-06OnePager_DataGlove_Auswertung_statische_Gesten.docx"
         double intervalWidth = (maxOfSumOfLnGaussianNaiveBayes - minOfSumOfLnGaussianNaiveBayes) / numberOfIntervals; //item 19
         double[] lowerIntervalBounds = new double[numberOfIntervals];
@@ -154,6 +155,14 @@ public class GestureCalculationNaiveBayes {
             frequencyArray[i] = calculateFrequency(lowerIntervalBounds[i], upperIntervalBounds[i], sumOfLnGaussianNaiveBayesList);
         }
         return filterMeasurementSeries(frequencyArray, upperIntervalBounds, sumOfLnGaussianNaiveBayesList.size());
+    }
+
+    //if minSumOfLnGaussianNaiveBayes is -Infinity, it will be ignored ant the second smallest value is set as the minimum instead
+    private static double getMinimumOfSumOfLnGaussianNaiveBayes(List<Double> sumOfLnGaussianNaiveBayesList) {
+        for (double d : sumOfLnGaussianNaiveBayesList) {
+            if (Double.isFinite(d)) return d;
+        }
+        throw new AssertionError("no finite sumOfLnGaussianNaiveBayes found");
     }
 
     //item 22, 23
