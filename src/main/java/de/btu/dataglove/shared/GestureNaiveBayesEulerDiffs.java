@@ -25,7 +25,8 @@ public class GestureNaiveBayesEulerDiffs extends AbstractGesture {
         double sumOfLnNaiveBayes = GestureCalculationNaiveBayes.calculateSumOfLnGaussianNaiveBayes(frame, kappaArray, circularMeanArray,
                 accelerationMeanArray, accelerationVarianceArray, TypeOfGesture.get(this.typeOfGesture), true);
         System.out.println("isFrameRecognized sumOfLnNB: " + sumOfLnNaiveBayes);
-        if (sumOfLnNaiveBayes >= threshold) return 1; else return 0;
+        if (sumOfLnNaiveBayes < threshold) return 0;
+        return sumOfLnNaiveBayes / threshold;
     }
 
     public double getThreshold() {
